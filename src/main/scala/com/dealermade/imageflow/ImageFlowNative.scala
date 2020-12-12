@@ -1,7 +1,9 @@
 package com.dealermade.imageflow
 
-import jnr.ffi.annotations.{SaveError, TypeDefinition}
+import jnr.ffi.annotations.{In, Out, SaveError}
 import jnr.ffi.Pointer
+import jnr.ffi.byref.LongLongByReference
+import jnr.ffi.types.{int32_t, ssize_t}
 
 sealed abstract class Direction(val value: Int)
 case object In extends Direction(4)
@@ -43,8 +45,16 @@ trait ImageFlowNative {
 
 	def imageflow_context_has_error(context: Pointer): Boolean
 
-	def imageflow_context_add_input_buffer(context: Pointer, ioMode: Int, buffer: Pointer, count: Long, lifetime: Int): Boolean
+	def imageflow_context_add_input_buffer(context: Pointer, @In ioMode: Int, buffer: Pointer, count: Long, lifetime: Int): Boolean
 
-	def malloc(size: Long): Pointer
-	def free(pointer: Pointer): Unit
+	def imageflow_context_add_output_buffer(context: Pointer, @In ioMode: Int): Boolean
+
+	def imageflow_context_get_output_buffer_by_id(context: Pointer,@In @int32_t ioMode: Int, @In resultBuffer: Array[Byte], @Out resultBufferLength: LongLongByReference): Pointer
+
+	def imageflow_context_error_write_to_buffer(context: Pointer, buffer: Array[Byte], @ssize_t bufferLength: Long, @Out bytesWritten: LongLongByReference): Boolean
+
+	def imageflow_context_error_as_http_code(context: Pointer): Long
+
+	def imageflow_context_send_json(context: Pointer, method: String, @In jsonBuffer: Array[Byte], @In @ssize_t jsonBufferSize: Long): Pointer
+
 }
