@@ -6,7 +6,7 @@ object Dependencies {
 
 	val scalaTestVersion: String = "3.2.2"
 	val scalaJHttpVersion: String = "2.4.2"
-	val jacksonVersion: String = "2.12.0"
+	val gsonVersion: String = "2.8.6"
 	val betterFilesVersion: String = "3.9.1"
 	val jnrVersion: String = "2.2.1"
 
@@ -18,12 +18,12 @@ object Dependencies {
 		"org.scalaj" %% "scalaj-http" % scalaJHttpVersion
 	}
 
-	def jacksonJson: Def.Initialize[ModuleID] = Def.setting {
-		"com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion
-	}
-
 	def betterFiles: Def.Initialize[ModuleID] = Def.setting {
 		"com.github.pathikrit" %% "better-files" % betterFilesVersion
+	}
+
+	def gson: Def.Initialize[ModuleID] = Def.setting {
+		"com.google.code.gson" % "gson" % gsonVersion
 	}
 
 	def jnrFFI: Def.Initialize[ModuleID] = Def.setting {
