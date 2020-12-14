@@ -1,4 +1,4 @@
-package com.dealermade.imageflow
+package com.dealermade.imageflow.native
 
 import com.dealermade.imageflow.utils.NativeUtils
 import jnr.ffi.annotations.{In, Out, SaveError}
@@ -6,9 +6,9 @@ import jnr.ffi.{LibraryLoader, Pointer}
 import jnr.ffi.byref.{LongLongByReference, PointerByReference}
 import jnr.ffi.types.{int32_t, ssize_t}
 
-sealed abstract class Direction(val value: Int)
-case object In extends Direction(4)
-case object Out extends Direction(8)
+sealed abstract class Direction(val value: String)
+case object In extends Direction("in")
+case object Out extends Direction("out")
 
 sealed abstract class IoMode(val value: Int)
 case object None extends IoMode(0)
@@ -21,6 +21,12 @@ case object ReadWriteSeekable extends IoMode(15)
 sealed abstract class Lifetime(val value: Int)
 case object OutlivesFunctionCall extends Lifetime(0)
 case object OutlivesContext extends Lifetime(1)
+
+sealed abstract class ImageFlowApi(val api: String)
+case object GetImageInfo extends ImageFlowApi("v0.1/get_image_info")
+case object Execute extends ImageFlowApi("v1/execute")
+
+case class ImageFlowVersion(versionMajor: Long, versionMinor: Long)
 
 trait ImageFlowNative {
 	def imageflow_abi_version_major(): Long
@@ -77,4 +83,16 @@ object ImageFlowNative {
 		System.setProperty("jnr.ffi.library.path", NativeUtils.getPathToApp)
 		LibraryLoader.create(classOf[ImageFlowNative]).load(dllLib)
 	}
+
+	def getVersion()(implicit imageFlowNativeLibrary: ImageFlowNative): ImageFlowVersion = {
+		val versionMajor: Long = imageFlowNativeLibrary.imageflow_abi_version_major()
+		val versionMinor: Long = imageFlowNativeLibrary.imageflow_abi_version_minor()
+		ImageFlowVersion(versionMajor, versionMinor)
+	}
+
+	def isCompatible(versionMajor: Long, versionMinor: Long)(implicit imageFlowNativeLibrary: ImageFlowNative): Boolean = imageFlowNativeLibrary.imageflow_abi_compatible(versionMajor, versionMinor)
+	def isCompatible(imageFlowVersion: ImageFlowVersion)(implicit imageFlowNativeLibrary: ImageFlowNative): Boolean = imageFlowNativeLibrary.imageflow_abi_compatible(imageFlowVersion.versionMajor, imageFlowVersion.versionMinor)
+
+	def createContext(versionMajor: Long, versionMinor: Long)(implicit imageFlowNativeLibrary: ImageFlowNative): Pointer = imageFlowNativeLibrary.imageflow_context_create(versionMajor, versionMinor)
+	def createContext(imageFlowVersion: ImageFlowVersion)(implicit imageFlowNativeLibrary: ImageFlowNative): Pointer = imageFlowNativeLibrary.imageflow_context_create(imageFlowVersion.versionMajor, imageFlowVersion.versionMinor)
 }
