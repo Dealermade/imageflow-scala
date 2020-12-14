@@ -15,7 +15,7 @@ lazy val root = project
 		),
 		mainClass in (Compile, run) := Some("com.dealermade.imageflow.Main"),
 		scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Xlint", "-Xlog-free-terms"),
-		libraryDependencies ++= dependencies(scalaJHttp.value, gson.value, betterFiles.value, jnrFFI.value) ++ testDependencies(scalaTest.value),
+		libraryDependencies ++= dependencies(scalaJHttp.value, sprayJson.value, betterFiles.value, jnrFFI.value) ++ testDependencies(scalaTest.value),
 	)
 
 

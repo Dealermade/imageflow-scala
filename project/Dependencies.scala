@@ -6,7 +6,7 @@ object Dependencies {
 
 	val scalaTestVersion: String = "3.2.2"
 	val scalaJHttpVersion: String = "2.4.2"
-	val gsonVersion: String = "2.8.6"
+	val sprayJsonVersion: String = "1.3.6"
 	val betterFilesVersion: String = "3.9.1"
 	val jnrVersion: String = "2.2.1"
 
@@ -22,8 +22,8 @@ object Dependencies {
 		"com.github.pathikrit" %% "better-files" % betterFilesVersion
 	}
 
-	def gson: Def.Initialize[ModuleID] = Def.setting {
-		"com.google.code.gson" % "gson" % gsonVersion
+	def sprayJson: Def.Initialize[ModuleID] = Def.setting {
+		"io.spray" %% "spray-json" % sprayJsonVersion
 	}
 
 	def jnrFFI: Def.Initialize[ModuleID] = Def.setting {
