@@ -28,7 +28,7 @@ protected[jobs] case class ImageJob(filePath: String,
     import com.dealermade.imageflow.entities.ImageFlowJsonProtocol._
 
     val framwise: Framwise   = Framwise(steps)
-    val imageFlow: ImageFlow = ImageFlow(io.toVector, framwise, Option.empty)
+    val imageFlow: ImageFlow = ImageFlow(io.toVector, framwise, None)
 
     val json: JsValue = imageFlow.toJson
     json.toString().getBytes
@@ -56,7 +56,7 @@ protected[jobs] case class ImageJob(filePath: String,
   def getImageInfo(ioID: Int): JsonResponse = {
     import com.dealermade.imageflow.entities.IOJsonProtocol._
 
-    val io: IO                  = IO(ioID, Option.empty, Option.empty)
+    val io: IO                  = IO(ioID, None, None)
     val ioCommands: Array[Byte] = io.toJson.toString().getBytes
     val jsonResponse: JsonResponseStruct =
       imageFlowNativeLibrary.imageflow_context_send_json(context, GetImageInfo.api, ioCommands, ioCommands.length)
@@ -107,7 +107,7 @@ protected[dealermade] case class ImageJobBuilder(filePath: String,
                                                  lifetime: Lifetime,
                                                  io: Set[IO] = Set.empty,
                                                  steps: Vector[Step] = Vector.empty,
-                                                 security: Option[Security] = Option.empty)(
+                                                 security: Option[Security] = None)(
     implicit imageFlowNative: ImageFlowNative,
     implicit val context: Pointer
 ) {
@@ -131,12 +131,12 @@ protected[dealermade] case class ImageJobBuilder(filePath: String,
   }
 
   def constrain(mode: Option[ConstrainMode],
-                width: Option[Int] = Option.empty,
-                height: Option[Int] = Option.empty,
-                gravity: Option[Gravity] = Option.empty,
-                canvasColor: Option[String] = Option.empty,
-                hints: Option[Hints] = Option.empty): ImageJobBuilder = {
-    val constrainMode: Option[String] = mode.fold { Option.empty[String] } { constrainModeString =>
+                width: Option[Int] = None,
+                height: Option[Int] = None,
+                gravity: Option[Gravity] = None,
+                canvasColor: Option[String] = None,
+                hints: Option[Hints] = None): ImageJobBuilder = {
+    val constrainMode: Option[String] = mode.fold { None[String] } { constrainModeString =>
       Some(constrainModeString.value)
     }
     val constrainStep: ConstrainStep = ConstrainStep(constrainMode, width, height, gravity, canvasColor, hints)

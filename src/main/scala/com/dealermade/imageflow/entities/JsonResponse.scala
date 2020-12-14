@@ -10,7 +10,7 @@ object JsonResponse {
     override def read(json: JsValue): JsonResponse =
       json.asJsObject.getFields("code", "success", "message", "data") match {
         case Seq(JsNumber(code), JsString(success), JsString(message)) =>
-          JsonResponse(code.toInt, success.toBoolean, message, Option.empty)
+          JsonResponse(code.toInt, success.toBoolean, message, None)
         case Seq(JsNumber(code), JsBoolean(success), JsString(message), JsObject(data)) =>
           JsonResponse(code.toInt, success, message, Some(data))
         case _ => throw DeserializationException("JobResponse entity is expected!")

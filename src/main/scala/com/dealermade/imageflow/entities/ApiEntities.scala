@@ -1,7 +1,5 @@
 package com.dealermade.imageflow.entities
 
-import spray.json._
-
 sealed abstract class Orientation(val value: Char)
 case object Horizontal extends Orientation(value = 'h')
 case object Vertical   extends Orientation(value = 'v')
@@ -74,14 +72,14 @@ object ImageFlowJsonProtocol extends DefaultJsonProtocol {
       List(
         Some("io"        -> c.io.toJson),
         Some("framewise" -> c.framewise.toJson),
-        if (c.security.isDefined) Some("security" -> c.security.toJson) else Option.empty,
+        if (c.security.isDefined) Some("security" -> c.security.toJson) else None,
       ).flatten: _*
     )
 
     override def read(json: JsValue): ImageFlow = ???
 //			json.asJsObject.getFields("io", "framewise", "security") match {
 //			case Seq(io, framewise, security) => ImageFlow(io.convertTo[Vector[IO]], framewise.convertTo[Framwise], Some(security.convertTo[Security]))
-//			case Seq(io, framewise) => ImageFlow(io.convertTo[Vector[IO]], framewise.convertTo[Framwise], Option.empty)
+//			case Seq(io, framewise) => ImageFlow(io.convertTo[Vector[IO]], framewise.convertTo[Framwise], None)
 //			case _ => throw DeserializationException("ImageFlow entity is expected!")
 //		}
   }
@@ -202,7 +200,7 @@ object DecodeJsonProtocol extends DefaultJsonProtocol {
             case jpegDownscaleHints: JpegDownscaleHints => jpegDownscaleHintsHintJsonFormat.write(jpegDownscaleHints)
             case webpDecoderHints: WebpDecoderHints     => webpDecoderHintsJsonFormat.write(webpDecoderHints)
           }))
-          else Option.empty,
+          else None,
         ).flatten: _*
       )
     )
@@ -309,12 +307,12 @@ object ConstrainJsonProtocol extends DefaultJsonProtocol {
   * @param hints See https://docs.imageflow.io/json/constrain.html#resampling-hints
   * For more information check https://docs.imageflow.io/json/constrain.html
   */
-case class ConstrainStep(mode: Option[String] = Option.empty,
-                         width: Option[Int] = Option.empty,
-                         height: Option[Int] = Option.empty,
-                         gravity: Option[Gravity] = Option.empty,
-                         canvasColor: Option[String] = Option.empty,
-                         hints: Option[Hints] = Option.empty)
+case class ConstrainStep(mode: Option[String] = None,
+                         width: Option[Int] = None,
+                         height: Option[Int] = None,
+                         gravity: Option[Gravity] = None,
+                         canvasColor: Option[String] = None,
+                         hints: Option[Hints] = None)
 object ConstrainStepJsonProtocol extends DefaultJsonProtocol {
   implicit val hintsJsonProtocol: RootJsonFormat[Hints]   = HintsJsonProtocol.hintsJsonFormat
   implicit val gravityJsonFormat: RootJsonFormat[Gravity] = GravityJsonProtocol.gravityJsonFormat
@@ -388,9 +386,9 @@ object LossyPNGJsonProtocol extends DefaultJsonProtocol {
 }
 
 case class PNGQuant(quality: Int = 100,
-                    speed: Option[Int] = Option.empty,
-                    minimumQuality: Option[Int] = Option.empty,
-                    maximumDeflate: Option[Boolean] = Option.empty)
+                    speed: Option[Int] = None,
+                    minimumQuality: Option[Int] = None,
+                    maximumDeflate: Option[Boolean] = None)
 object PNGQuantJsonProtocol extends DefaultJsonProtocol {
   implicit val pngQuantJsonFormat: RootJsonFormat[PNGQuant] =
     jsonFormat(PNGQuant, "quality", "speed", "minimum_quality", "maximum_deflate")
