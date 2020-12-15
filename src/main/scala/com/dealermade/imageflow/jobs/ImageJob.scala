@@ -1,6 +1,9 @@
 package com.dealermade.imageflow.jobs
 
+import java.nio.file.{ Files, Path, Paths }
+
 import zio.json._
+import com.dealermade.imageflow.entities._
 
 import com.dealermade.imageflow.entities.libimageflow._
 import com.dealermade.imageflow.native.{ Execute, GetImageInfo, ImageFlowNative, In, IoMode, Lifetime, Out }
@@ -50,7 +53,7 @@ protected[jobs] case class ImageJob(
   def addOutputBuffer(ioMode: IoMode): Boolean =
     imageFlowNativeLibrary.imageflow_context_add_output_buffer(context, ioMode.value)
 
-  def getImageInfo(ioID: Int): Either[String, ImageFlowResponse] = {
+  def getImageInfo(ioID: Int): Either[String, ImageInfoResponse] = {
     import com.dealermade.imageflow.entities.libimageflow.ImageFlow._
 
     val io: IO                  = IO(ioID, None, None)
@@ -58,15 +61,16 @@ protected[jobs] case class ImageJob(
     val jsonResponse: ImageFlowResponseStruct =
       imageFlowNativeLibrary.imageflow_context_send_json(context, GetImageInfo.api, ioCommands, ioCommands.length)
 
-    import com.dealermade.imageflow.entities.libimageflow.ImageFlowResponse._
-    jsonResponse.data.get().fromJson[ImageFlowResponse]
+    import com.dealermade.imageflow.entities.libimageflow.ImageInfoResponse._
+    jsonResponse.data.get().fromJson[ImageInfoResponse]
   }
 
-  def processImage(): Either[String, ImageFlowResponse] = {
+  def processImage(): Either[String, JobResultResponse] = {
     val commands: Array[Byte] = getCommands
+    println(commands.map(_.toChar).mkString)
     val jsonResponse: ImageFlowResponseStruct =
       imageFlowNativeLibrary.imageflow_context_send_json(context, Execute.api, commands, commands.length)
-    jsonResponse.data.get().fromJson[ImageFlowResponse]
+    ImageFlowResponse.parse(jsonResponse.data.get())
   }
 
   def writeOutputImage(ioID: Int): Array[Byte] = {
@@ -79,11 +83,9 @@ protected[jobs] case class ImageJob(
     response
   }
 
-  def writeOutputImageToFile(ioID: Int, filePath: String): File = {
+  def writeOutputImageToFile(ioID: Int, filePath: String): Path = {
     val imageBuffer: Array[Byte] = writeOutputImage(ioID)
-    val file: File               = File(filePath)
-    file.writeAll(imageBuffer.map(_.toChar).mkString)
-    file
+    Files.write(Paths.get(filePath), imageBuffer)
   }
 }
 
