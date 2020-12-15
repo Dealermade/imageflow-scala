@@ -1,0 +1,577 @@
+{
+    "version": "1.4.0",
+    "project": {
+        "name": "imageflow-scala",
+        "directory": "/Users/jaredmdobson/Development/imageflow-scala",
+        "workspaceDir": "/Users/jaredmdobson/Development/imageflow-scala",
+        "sources": [
+            "/Users/jaredmdobson/Development/imageflow-scala/src/main/scala",
+            "/Users/jaredmdobson/Development/imageflow-scala/src/main/scala-2.13",
+            "/Users/jaredmdobson/Development/imageflow-scala/src/main/scala-2",
+            "/Users/jaredmdobson/Development/imageflow-scala/src/main/java",
+            "/Users/jaredmdobson/Development/imageflow-scala/target/scala-2.13/src_managed/main"
+        ],
+        "dependencies": [
+            
+        ],
+        "classpath": [
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.4/scala-library-2.13.4.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/bytedeco/javacpp/1.5.3/javacpp-1.5.3.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/github/jnr/jnr-ffi/2.2.1/jnr-ffi-2.2.1.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/circe/circe-core_2.13/0.13.0/circe-core_2.13-0.13.0.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/circe/circe-generic_2.13/0.13.0/circe-generic_2.13-0.13.0.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/circe/circe-parser_2.13/0.13.0/circe-parser_2.13-0.13.0.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/circe/circe-generic-extras_2.13/0.13.0/circe-generic-extras_2.13-0.13.0.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/dev/zio/zio_2.13/1.0.3/zio_2.13-1.0.3.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/github/jnr/jffi/1.3.1/jffi-1.3.1.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/github/jnr/jffi/1.3.1/jffi-1.3.1-native.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/ow2/asm/asm/9.0/asm-9.0.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/ow2/asm/asm-commons/9.0/asm-commons-9.0.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/ow2/asm/asm-analysis/9.0/asm-analysis-9.0.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/ow2/asm/asm-tree/9.0/asm-tree-9.0.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/ow2/asm/asm-util/9.0/asm-util-9.0.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/github/jnr/jnr-a64asm/1.0.0/jnr-a64asm-1.0.0.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/github/jnr/jnr-x86asm/1.0.2/jnr-x86asm-1.0.2.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/circe/circe-numbers_2.13/0.13.0/circe-numbers_2.13-0.13.0.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-core_2.13/2.1.0/cats-core_2.13-2.1.0.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/chuusai/shapeless_2.13/2.3.3/shapeless_2.13-2.3.3.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/circe/circe-jawn_2.13/0.13.0/circe-jawn_2.13-0.13.0.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/dev/zio/zio-stacktracer_2.13/1.0.3/zio-stacktracer_2.13-1.0.3.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/dev/zio/izumi-reflect_2.13/1.0.0-M9/izumi-reflect_2.13-1.0.0-M9.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-macros_2.13/2.1.0/cats-macros_2.13-2.1.0.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-kernel_2.13/2.1.0/cats-kernel_2.13-2.1.0.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/typelevel/jawn-parser_2.13/1.0.0/jawn-parser_2.13-1.0.0.jar",
+            "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/dev/zio/izumi-reflect-thirdparty-boopickle-shaded_2.13/1.0.0-M9/izumi-reflect-thirdparty-boopickle-shaded_2.13-1.0.0-M9.jar"
+        ],
+        "out": "/Users/jaredmdobson/Development/imageflow-scala/.bloop/imageflow-scala",
+        "classesDir": "/Users/jaredmdobson/Development/imageflow-scala/.bloop/imageflow-scala/scala-2.13/classes",
+        "resources": [
+            "/Users/jaredmdobson/Development/imageflow-scala/src/main/resources",
+            "/Users/jaredmdobson/Development/imageflow-scala/target/scala-2.13/resource_managed/main"
+        ],
+        "scala": {
+            "organization": "org.scala-lang",
+            "name": "scala-compiler",
+            "version": "2.13.4",
+            "options": [
+                "-deprecation"
+            ],
+            "jars": [
+                "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.13.4/scala-compiler-2.13.4.jar",
+                "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.4/scala-library-2.13.4.jar",
+                "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.13.4/scala-reflect-2.13.4.jar",
+                "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/jline/jline/3.16.0/jline-3.16.0.jar",
+                "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/net/java/dev/jna/jna/5.3.1/jna-5.3.1.jar"
+            ],
+            "analysis": "/Users/jaredmdobson/Development/imageflow-scala/target/streams/compile/bloopAnalysisOut/_global/streams/inc_compile_2.13.zip",
+            "setup": {
+                "order": "mixed",
+                "addLibraryToBootClasspath": true,
+                "addCompilerToClasspath": false,
+                "addExtraJarsToClasspath": false,
+                "manageBootClasspath": true,
+                "filterLibraryFromClasspath": true
+            }
+        },
+        "java": {
+            "options": [
+                
+            ]
+        },
+        "test": {
+            "frameworks": [
+                {
+                    "names": [
+                        "zio.test.sbt.ZTestFramework"
+                    ]
+                }
+            ],
+            "options": {
+                "excludes": [
+                    
+                ],
+                "arguments": [
+                    
+                ]
+            }
+        },
+        "platform": {
+            "name": "jvm",
+            "config": {
+                "home": "/Users/jaredmdobson/.jabba/jdk/adopt@1.8.0-272/Contents/Home/jre",
+                "options": [
+                    "-Duser.dir=/Users/jaredmdobson/Development/imageflow-scala"
+                ]
+            },
+            "mainClass": [
+                
+            ]
+        },
+        "resolution": {
+            "modules": [
+                {
+                    "organization": "org.scala-lang",
+                    "name": "scala-library",
+                    "version": "2.13.4",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "scala-library",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.4/scala-library-2.13.4.jar"
+                        },
+                        {
+                            "name": "scala-library",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.4/scala-library-2.13.4-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.bytedeco",
+                    "name": "javacpp",
+                    "version": "1.5.3",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "javacpp",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/bytedeco/javacpp/1.5.3/javacpp-1.5.3.jar"
+                        },
+                        {
+                            "name": "javacpp",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/bytedeco/javacpp/1.5.3/javacpp-1.5.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.github.jnr",
+                    "name": "jnr-ffi",
+                    "version": "2.2.1",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "jnr-ffi",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/github/jnr/jnr-ffi/2.2.1/jnr-ffi-2.2.1.jar"
+                        },
+                        {
+                            "name": "jnr-ffi",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/github/jnr/jnr-ffi/2.2.1/jnr-ffi-2.2.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "io.circe",
+                    "name": "circe-core_2.13",
+                    "version": "0.13.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "circe-core_2.13",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/circe/circe-core_2.13/0.13.0/circe-core_2.13-0.13.0.jar"
+                        },
+                        {
+                            "name": "circe-core_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/circe/circe-core_2.13/0.13.0/circe-core_2.13-0.13.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "io.circe",
+                    "name": "circe-generic_2.13",
+                    "version": "0.13.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "circe-generic_2.13",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/circe/circe-generic_2.13/0.13.0/circe-generic_2.13-0.13.0.jar"
+                        },
+                        {
+                            "name": "circe-generic_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/circe/circe-generic_2.13/0.13.0/circe-generic_2.13-0.13.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "io.circe",
+                    "name": "circe-parser_2.13",
+                    "version": "0.13.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "circe-parser_2.13",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/circe/circe-parser_2.13/0.13.0/circe-parser_2.13-0.13.0.jar"
+                        },
+                        {
+                            "name": "circe-parser_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/circe/circe-parser_2.13/0.13.0/circe-parser_2.13-0.13.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "io.circe",
+                    "name": "circe-generic-extras_2.13",
+                    "version": "0.13.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "circe-generic-extras_2.13",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/circe/circe-generic-extras_2.13/0.13.0/circe-generic-extras_2.13-0.13.0.jar"
+                        },
+                        {
+                            "name": "circe-generic-extras_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/circe/circe-generic-extras_2.13/0.13.0/circe-generic-extras_2.13-0.13.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "dev.zio",
+                    "name": "zio_2.13",
+                    "version": "1.0.3",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "zio_2.13",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/dev/zio/zio_2.13/1.0.3/zio_2.13-1.0.3.jar"
+                        },
+                        {
+                            "name": "zio_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/dev/zio/zio_2.13/1.0.3/zio_2.13-1.0.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.github.jnr",
+                    "name": "jffi",
+                    "version": "1.3.1",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "jffi",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/github/jnr/jffi/1.3.1/jffi-1.3.1.jar"
+                        },
+                        {
+                            "name": "jffi",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/github/jnr/jffi/1.3.1/jffi-1.3.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.ow2.asm",
+                    "name": "asm",
+                    "version": "9.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "asm",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/ow2/asm/asm/9.0/asm-9.0.jar"
+                        },
+                        {
+                            "name": "asm",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/ow2/asm/asm/9.0/asm-9.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.ow2.asm",
+                    "name": "asm-commons",
+                    "version": "9.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "asm-commons",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/ow2/asm/asm-commons/9.0/asm-commons-9.0.jar"
+                        },
+                        {
+                            "name": "asm-commons",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/ow2/asm/asm-commons/9.0/asm-commons-9.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.ow2.asm",
+                    "name": "asm-analysis",
+                    "version": "9.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "asm-analysis",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/ow2/asm/asm-analysis/9.0/asm-analysis-9.0.jar"
+                        },
+                        {
+                            "name": "asm-analysis",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/ow2/asm/asm-analysis/9.0/asm-analysis-9.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.ow2.asm",
+                    "name": "asm-tree",
+                    "version": "9.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "asm-tree",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/ow2/asm/asm-tree/9.0/asm-tree-9.0.jar"
+                        },
+                        {
+                            "name": "asm-tree",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/ow2/asm/asm-tree/9.0/asm-tree-9.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.ow2.asm",
+                    "name": "asm-util",
+                    "version": "9.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "asm-util",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/ow2/asm/asm-util/9.0/asm-util-9.0.jar"
+                        },
+                        {
+                            "name": "asm-util",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/ow2/asm/asm-util/9.0/asm-util-9.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.github.jnr",
+                    "name": "jnr-a64asm",
+                    "version": "1.0.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "jnr-a64asm",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/github/jnr/jnr-a64asm/1.0.0/jnr-a64asm-1.0.0.jar"
+                        },
+                        {
+                            "name": "jnr-a64asm",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/github/jnr/jnr-a64asm/1.0.0/jnr-a64asm-1.0.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.github.jnr",
+                    "name": "jnr-x86asm",
+                    "version": "1.0.2",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "jnr-x86asm",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/github/jnr/jnr-x86asm/1.0.2/jnr-x86asm-1.0.2.jar"
+                        },
+                        {
+                            "name": "jnr-x86asm",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/github/jnr/jnr-x86asm/1.0.2/jnr-x86asm-1.0.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "io.circe",
+                    "name": "circe-numbers_2.13",
+                    "version": "0.13.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "circe-numbers_2.13",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/circe/circe-numbers_2.13/0.13.0/circe-numbers_2.13-0.13.0.jar"
+                        },
+                        {
+                            "name": "circe-numbers_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/circe/circe-numbers_2.13/0.13.0/circe-numbers_2.13-0.13.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.typelevel",
+                    "name": "cats-core_2.13",
+                    "version": "2.1.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "cats-core_2.13",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-core_2.13/2.1.0/cats-core_2.13-2.1.0.jar"
+                        },
+                        {
+                            "name": "cats-core_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-core_2.13/2.1.0/cats-core_2.13-2.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.chuusai",
+                    "name": "shapeless_2.13",
+                    "version": "2.3.3",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "shapeless_2.13",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/chuusai/shapeless_2.13/2.3.3/shapeless_2.13-2.3.3.jar"
+                        },
+                        {
+                            "name": "shapeless_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/chuusai/shapeless_2.13/2.3.3/shapeless_2.13-2.3.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "io.circe",
+                    "name": "circe-jawn_2.13",
+                    "version": "0.13.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "circe-jawn_2.13",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/circe/circe-jawn_2.13/0.13.0/circe-jawn_2.13-0.13.0.jar"
+                        },
+                        {
+                            "name": "circe-jawn_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/circe/circe-jawn_2.13/0.13.0/circe-jawn_2.13-0.13.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "dev.zio",
+                    "name": "zio-stacktracer_2.13",
+                    "version": "1.0.3",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "zio-stacktracer_2.13",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/dev/zio/zio-stacktracer_2.13/1.0.3/zio-stacktracer_2.13-1.0.3.jar"
+                        },
+                        {
+                            "name": "zio-stacktracer_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/dev/zio/zio-stacktracer_2.13/1.0.3/zio-stacktracer_2.13-1.0.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "dev.zio",
+                    "name": "izumi-reflect_2.13",
+                    "version": "1.0.0-M9",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "izumi-reflect_2.13",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/dev/zio/izumi-reflect_2.13/1.0.0-M9/izumi-reflect_2.13-1.0.0-M9.jar"
+                        },
+                        {
+                            "name": "izumi-reflect_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/dev/zio/izumi-reflect_2.13/1.0.0-M9/izumi-reflect_2.13-1.0.0-M9-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.typelevel",
+                    "name": "cats-macros_2.13",
+                    "version": "2.1.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "cats-macros_2.13",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-macros_2.13/2.1.0/cats-macros_2.13-2.1.0.jar"
+                        },
+                        {
+                            "name": "cats-macros_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-macros_2.13/2.1.0/cats-macros_2.13-2.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.typelevel",
+                    "name": "cats-kernel_2.13",
+                    "version": "2.1.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "cats-kernel_2.13",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-kernel_2.13/2.1.0/cats-kernel_2.13-2.1.0.jar"
+                        },
+                        {
+                            "name": "cats-kernel_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-kernel_2.13/2.1.0/cats-kernel_2.13-2.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.typelevel",
+                    "name": "jawn-parser_2.13",
+                    "version": "1.0.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "jawn-parser_2.13",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/typelevel/jawn-parser_2.13/1.0.0/jawn-parser_2.13-1.0.0.jar"
+                        },
+                        {
+                            "name": "jawn-parser_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/typelevel/jawn-parser_2.13/1.0.0/jawn-parser_2.13-1.0.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "dev.zio",
+                    "name": "izumi-reflect-thirdparty-boopickle-shaded_2.13",
+                    "version": "1.0.0-M9",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "izumi-reflect-thirdparty-boopickle-shaded_2.13",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/dev/zio/izumi-reflect-thirdparty-boopickle-shaded_2.13/1.0.0-M9/izumi-reflect-thirdparty-boopickle-shaded_2.13-1.0.0-M9.jar"
+                        },
+                        {
+                            "name": "izumi-reflect-thirdparty-boopickle-shaded_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/dev/zio/izumi-reflect-thirdparty-boopickle-shaded_2.13/1.0.0-M9/izumi-reflect-thirdparty-boopickle-shaded_2.13-1.0.0-M9-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scala-lang",
+                    "name": "scala-library",
+                    "version": "2.13.4",
+                    "configurations": "optional",
+                    "artifacts": [
+                        {
+                            "name": "scala-library",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.4/scala-library-2.13.4.jar"
+                        },
+                        {
+                            "name": "scala-library",
+                            "classifier": "sources",
+                            "path": "/Users/jaredmdobson/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.4/scala-library-2.13.4-sources.jar"
+                        }
+                    ]
+                }
+            ]
+        },
+        "tags": [
+            "library"
+        ]
+    }
+}

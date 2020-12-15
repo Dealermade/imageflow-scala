@@ -1,4 +1,4 @@
-package com.dealermade.imageflow.jobs
+package com.dealermade.imageflow
 
 import better.files._
 import com.dealermade.imageflow.entities.{ AspectCrop, LossyPNG, PNGQuant }
