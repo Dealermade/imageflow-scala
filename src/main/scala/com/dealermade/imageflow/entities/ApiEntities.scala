@@ -1,5 +1,6 @@
 package com.dealermade.imageflow.entities
 
+import zio.json.internal.Write
 import zio.json.{ jsonField, DeriveJsonEncoder, JsonEncoder }
 
 sealed abstract class Orientation(val value: Char)
@@ -67,21 +68,59 @@ case class ImageFlow(io: Vector[IO], framewise: Framwise, security: Option[Secur
 object ImageFlow {
   implicit val gravityEncoder: JsonEncoder[Gravity]                     = DeriveJsonEncoder.gen[Gravity]
   implicit val coordinationEncoder: JsonEncoder[Coordination]           = DeriveJsonEncoder.gen[Coordination]
-  implicit val decodeStepEncoder: JsonEncoder[DecodeStep]               = DeriveJsonEncoder.gen[DecodeStep]
   implicit val hintsEncoder: JsonEncoder[Hints]                         = DeriveJsonEncoder.gen[Hints]
   implicit val jpegDownscaleHintEncoder: JsonEncoder[JpegDownscaleHint] = DeriveJsonEncoder.gen[JpegDownscaleHint]
   implicit val webpDecoderHintEncoder: JsonEncoder[WebpDecoderHint]     = DeriveJsonEncoder.gen[WebpDecoderHint]
-  implicit val presetEncoder: JsonEncoder[Preset]                       = DeriveJsonEncoder.gen[Preset]
   implicit val mozJPEGEncoder: JsonEncoder[MozJPEG]                     = DeriveJsonEncoder.gen[MozJPEG]
   implicit val lodePNGEncoder: JsonEncoder[LodePNG]                     = DeriveJsonEncoder.gen[LodePNG]
   implicit val pngQuantEncoder: JsonEncoder[PNGQuant]                   = DeriveJsonEncoder.gen[PNGQuant]
   implicit val constrainStepEncoder: JsonEncoder[ConstrainStep]         = DeriveJsonEncoder.gen[ConstrainStep]
-  implicit val stepEncoder: JsonEncoder[Step]                           = DeriveJsonEncoder.gen[Step]
-  implicit val framwiseEncoder: JsonEncoder[Framwise]                   = DeriveJsonEncoder.gen[Framwise]
-  implicit val securityEncoder: JsonEncoder[Security]                   = DeriveJsonEncoder.gen[Security]
-  implicit val securityImageEncoder: JsonEncoder[SecurityImage]         = DeriveJsonEncoder.gen[SecurityImage]
-  implicit val ioEncoder: JsonEncoder[IO]                               = DeriveJsonEncoder.gen[IO]
-  implicit val encoder: JsonEncoder[ImageFlow]                          = DeriveJsonEncoder.gen[ImageFlow]
+  implicit val jpegEncoder: JsonEncoder[JPEG]                           = DeriveJsonEncoder.gen[JPEG]
+  implicit val losslessPNGEncoder: JsonEncoder[LosslessPNG]             = DeriveJsonEncoder.gen[LosslessPNG]
+  implicit val LossyPNGEncoder: JsonEncoder[LossyPNG]                   = DeriveJsonEncoder.gen[LossyPNG]
+
+  implicit val jpegDownscaleHintsEncoder: JsonEncoder[JpegDownscaleHints] = DeriveJsonEncoder.gen[JpegDownscaleHints]
+
+  implicit val decodeStepEncoder: JsonEncoder[DecodeStep] = (decodeStep: DecodeStep, indent: Option[Int], out: Write) =>
+    decodeStep match {
+      case DiscardColorProfile(discardColorProfile) =>
+        JsonEncoder[String].unsafeEncode(discardColorProfile, indent, out)
+      case IgnoreColorProfileErrors(ignoreColorProfileErrors) =>
+        JsonEncoder[String].unsafeEncode(ignoreColorProfileErrors, indent, out)
+      case jpegDownscaleHints: JpegDownscaleHints =>
+        jpegDownscaleHintsEncoder.unsafeEncode(jpegDownscaleHints, indent, out)
+    }
+
+  implicit val presetEncoder: JsonEncoder[Preset] = (preset: Preset, indent: Option[Int], out: Write) =>
+    preset match {
+      case jpeg: JPEG               => jpegEncoder.unsafeEncode(jpeg, indent, out)
+      case GIF(gif)                 => JsonEncoder[String].unsafeEncode(gif, indent, out)
+      case WebP(webp)               => JsonEncoder[String].unsafeEncode(webp, indent, out)
+      case losslessPng: LosslessPNG => losslessPNGEncoder.unsafeEncode(losslessPng, indent, out)
+      case lossyPNG: LossyPNG       => LossyPNGEncoder.unsafeEncode(lossyPNG, indent, out)
+    }
+
+  implicit val decodeEncoder: JsonEncoder[Decode]       = DeriveJsonEncoder.gen[Decode]
+  implicit val encodeEncoder: JsonEncoder[Encode]       = DeriveJsonEncoder.gen[Encode]
+  implicit val constrainEncoder: JsonEncoder[Constrain] = DeriveJsonEncoder.gen[Constrain]
+
+  implicit val stepEncoder: JsonEncoder[Step] = (step: Step, indent: Option[Int], out: Write) =>
+    step match {
+      case Rotation(rotation)   => JsonEncoder[String].unsafeEncode(rotation, indent, out)
+      case Flip(flip)           => JsonEncoder[String].unsafeEncode(flip, indent, out)
+      case Transpose(transpose) => JsonEncoder[String].unsafeEncode(transpose, indent, out)
+      case decode: Decode =>
+        out.write("""{"decode":"""); decodeEncoder.unsafeEncode(decode, indent, out); out.write("}")
+      case encode: Encode =>
+        out.write("""{"encode":"""); encodeEncoder.unsafeEncode(encode, indent, out); out.write("}")
+      case constrain: Constrain => constrainEncoder.unsafeEncode(constrain, indent, out)
+    }
+
+  implicit val framwiseEncoder: JsonEncoder[Framwise]           = DeriveJsonEncoder.gen[Framwise]
+  implicit val securityEncoder: JsonEncoder[Security]           = DeriveJsonEncoder.gen[Security]
+  implicit val securityImageEncoder: JsonEncoder[SecurityImage] = DeriveJsonEncoder.gen[SecurityImage]
+  implicit val ioEncoder: JsonEncoder[IO]                       = DeriveJsonEncoder.gen[IO]
+  implicit val encoder: JsonEncoder[ImageFlow]                  = DeriveJsonEncoder.gen[ImageFlow]
 
 }
 
@@ -104,9 +143,10 @@ case class Framwise(steps: Vector[Step])
 
 sealed trait Step
 
-case class Rotation(rotation: String)                                                  extends Step
-case class Flip(flip: String)                                                          extends Step
-case class Transpose(transpose: String)                                                extends Step
+case class Rotation(rotation: String)   extends Step
+case class Flip(flip: String)           extends Step
+case class Transpose(transpose: String) extends Step
+
 case class Decode(@jsonField("io_id") ioID: Int, commands: Option[Vector[DecodeStep]]) extends Step
 
 sealed trait DecodeStep
@@ -160,7 +200,8 @@ sealed trait Preset
 case class JPEG(mozjpeg: MozJPEG) extends Preset
 case class MozJPEG(quality: Int, progressive: Boolean)
 
-case class GIF(value: String = "gif")           extends Preset
+case class GIF(value: String = "gif") extends Preset
+
 case class WebP(value: String = "webplossless") extends Preset
 
 case class LosslessPNG(@jsonField("lodepng") lodePNG: LodePNG) extends Preset
