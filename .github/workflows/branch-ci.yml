@@ -33,7 +33,7 @@ jobs:
     - uses: actions/checkout@v2
     - uses: olafurpg/setup-scala@v10
       with:
-        java-version: graalvm@
+        java-version: openjdk@
     - name: Configure sysctl limits
       run: |
         sudo swapoff -a
