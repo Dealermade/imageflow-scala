@@ -2,8 +2,10 @@ package com.dealermade.imageflow
 
 import com.dealermade.imageflow.native.ImageFlowNative
 import jnr.ffi.Pointer
+import zio.Task
 
 class ImageFlow {
+  //private to this instance
   private[this] implicit lazy val imageFlowNativeLibrary: ImageFlowNative = ImageFlowNative()
   private[this] implicit lazy val context: Pointer                        = ImageFlowNative.createContext()
 
@@ -16,5 +18,7 @@ class ImageFlow {
   def getErrorCodeAsExitCode: Long = imageFlowNativeLibrary.imageflow_context_error_as_exit_code(context)
 
   def destroyContext: Boolean = ImageFlowNative.destroyContext()
+
+  def resizeImages: Task[Unit] = ???
 
 }

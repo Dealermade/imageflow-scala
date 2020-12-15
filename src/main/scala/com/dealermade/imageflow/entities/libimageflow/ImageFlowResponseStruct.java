@@ -1,4 +1,4 @@
-package com.dealermade.imageflow.entities;
+package com.dealermade.imageflow.entities.libimageflow;
 
 import jnr.ffi.Runtime;
 import jnr.ffi.Struct;

@@ -2,7 +2,7 @@ package com.dealermade.imageflow.jobs
 
 import zio.json._
 
-import com.dealermade.imageflow.entities._
+import com.dealermade.imageflow.entities.libimageflow._
 import com.dealermade.imageflow.native.{ Execute, GetImageInfo, ImageFlowNative, In, IoMode, Lifetime, Out }
 import jnr.ffi.byref.{ LongLongByReference, PointerByReference }
 import jnr.ffi.{ Memory, Pointer, Runtime }
@@ -27,7 +27,7 @@ protected[jobs] case class ImageJob(
   def getCommands: Array[Byte] = {
     val framwise: Framwise   = Framwise(steps)
     val imageFlow: ImageFlow = ImageFlow(io.toVector, framwise, None)
-    import com.dealermade.imageflow.entities.ImageFlow._
+    import com.dealermade.imageflow.entities.libimageflow.ImageFlow._
     imageFlow.toJson.getBytes
   }
 
@@ -51,14 +51,14 @@ protected[jobs] case class ImageJob(
     imageFlowNativeLibrary.imageflow_context_add_output_buffer(context, ioMode.value)
 
   def getImageInfo(ioID: Int): Either[String, ImageFlowResponse] = {
-    import com.dealermade.imageflow.entities.ImageFlow._
+    import com.dealermade.imageflow.entities.libimageflow.ImageFlow._
 
     val io: IO                  = IO(ioID, None, None)
     val ioCommands: Array[Byte] = io.toJson.getBytes
     val jsonResponse: ImageFlowResponseStruct =
       imageFlowNativeLibrary.imageflow_context_send_json(context, GetImageInfo.api, ioCommands, ioCommands.length)
 
-    import com.dealermade.imageflow.entities.ImageFlowResponse._
+    import com.dealermade.imageflow.entities.libimageflow.ImageFlowResponse._
     jsonResponse.data.get().fromJson[ImageFlowResponse]
   }
 

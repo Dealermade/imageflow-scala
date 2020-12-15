@@ -1,6 +1,6 @@
 package com.dealermade.imageflow.native
-import com.dealermade.imageflow.entities.ImageFlowResponseStruct
-import jnr.ffi.annotations.{ In, Out, SaveError }
+import com.dealermade.imageflow.entities.libimageflow.ImageFlowResponseStruct
+import jnr.ffi.annotations.{ In => JnrIn, Out => JnrOut, SaveError }
 import jnr.ffi.{ LibraryLoader, Pointer }
 import jnr.ffi.byref.{ LongLongByReference, PointerByReference }
 import jnr.ffi.types.{ int32_t, ssize_t }
@@ -138,7 +138,7 @@ trait ImageFlowNative {
 	 */
   def imageflow_context_add_input_buffer(
       context: Pointer,
-      @In ioMode: Int,
+      @JnrIn ioMode: Int,
       buffer: Pointer,
       count: Long,
       lifetime: Int
@@ -154,7 +154,7 @@ trait ImageFlowNative {
 	 *
 	 * C/C++ signature: bool imageflow_context_add_output_buffer(struct imageflow_context *context, int32_t io_id);
 	 */
-  def imageflow_context_add_output_buffer(context: Pointer, @In ioMode: Int): Boolean
+  def imageflow_context_add_output_buffer(context: Pointer, @JnrIn ioMode: Int): Boolean
 
   /**
 	 * Provides access to the underlying buffer for the given io id
@@ -172,9 +172,9 @@ trait ImageFlowNative {
 	 */
   def imageflow_context_get_output_buffer_by_id(
       context: Pointer,
-      @In @int32_t ioMode: Int,
-      @Out resultBuffer: PointerByReference,
-      @Out resultBufferLength: LongLongByReference
+      @JnrIn @int32_t ioMode: Int,
+      @JnrOut resultBuffer: PointerByReference,
+      @JnrOut resultBufferLength: LongLongByReference
   ): Pointer
 
   /**
@@ -201,7 +201,7 @@ trait ImageFlowNative {
       context: Pointer,
       buffer: Array[Byte],
       @ssize_t bufferLength: Long,
-      @Out bytesWritten: LongLongByReference
+      @JnrOut bytesWritten: LongLongByReference
   ): Boolean
 
   /**
@@ -255,8 +255,8 @@ trait ImageFlowNative {
   def imageflow_context_send_json(
       context: Pointer,
       method: String,
-      @In jsonBuffer: Array[Byte],
-      @In @ssize_t jsonBufferSize: Long
+      @JnrIn jsonBuffer: Array[Byte],
+      @JnrIn @ssize_t jsonBufferSize: Long
   ): ImageFlowResponseStruct
 
   /**
