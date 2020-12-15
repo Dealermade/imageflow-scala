@@ -1,4 +1,4 @@
-package com.dealermade.imageflow.entities
+package com.dealermade.imageflow.entities.libimageflow
 
 import zio.json.{ jsonField, DeriveJsonDecoder, JsonDecoder }
 
@@ -105,7 +105,7 @@ object ImageFlowResponse {
 
   def parse(jsonResponse: String): Either[String, JobResultResponse] = {
     import zio.json._
-    import com.dealermade.imageflow.entities.ImageFlowResponse._
+    import com.dealermade.imageflow.entities.libimageflow.ImageFlowResponse._
 
     val last   = jsonResponse.toCharArray.lastIndexOf('}')
     val before = jsonResponse.slice(0, last + 1)
