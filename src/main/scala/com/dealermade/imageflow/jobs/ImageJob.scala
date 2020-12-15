@@ -1,37 +1,34 @@
 package com.dealermade.imageflow.jobs
 
-import java.io.{ File => JavaFile }
+import zio.json._
 
-import better.files.File
-import spray.json._
 import com.dealermade.imageflow.entities._
 import com.dealermade.imageflow.native.{ Execute, GetImageInfo, ImageFlowNative, In, IoMode, Lifetime, Out }
 import jnr.ffi.byref.{ LongLongByReference, PointerByReference }
 import jnr.ffi.{ Memory, Pointer, Runtime }
 
-protected[jobs] case class ImageJob(filePath: String,
-                                    ioMode: IoMode,
-                                    lifetime: Lifetime,
-                                    io: Set[IO],
-                                    steps: Vector[Step],
-                                    security: Option[Security])(
+import scala.reflect.io.File
+
+protected[jobs] case class ImageJob(
+    filePath: String,
+    ioMode: IoMode,
+    lifetime: Lifetime,
+    io: Set[IO],
+    steps: Vector[Step],
+    security: Option[Security]
+)(
     implicit val imageFlowNativeLibrary: ImageFlowNative,
     implicit val context: Pointer
 ) {
 
-  def getFileStream: Array[Byte] = {
-    import better.files._
-    new JavaFile(filePath).toScala.byteArray
-  }
+  def getFileStream: Array[Byte] =
+    File(filePath).toByteArray()
 
   def getCommands: Array[Byte] = {
-    import com.dealermade.imageflow.entities.ImageFlowJsonProtocol._
-
     val framwise: Framwise   = Framwise(steps)
-    val imageFlow: ImageFlow = ImageFlow(io.toVector, framwise, Option.empty)
-
-    val json: JsValue = imageFlow.toJson
-    json.toString().getBytes
+    val imageFlow: ImageFlow = ImageFlow(io.toVector, framwise, None)
+    import com.dealermade.imageflow.entities.ImageFlow._
+    imageFlow.toJson.getBytes
   }
 
   def addImageToContext(): Either[Boolean, String] = {
@@ -53,21 +50,23 @@ protected[jobs] case class ImageJob(filePath: String,
   def addOutputBuffer(ioMode: IoMode): Boolean =
     imageFlowNativeLibrary.imageflow_context_add_output_buffer(context, ioMode.value)
 
-  def getImageInfo(ioID: Int): JsonResponse = {
-    import com.dealermade.imageflow.entities.IOJsonProtocol._
+  def getImageInfo(ioID: Int): Either[String, ImageFlowResponse] = {
+    import com.dealermade.imageflow.entities.ImageFlow._
 
-    val io: IO                  = IO(ioID, Option.empty, Option.empty)
-    val ioCommands: Array[Byte] = io.toJson.toString().getBytes
-    val jsonResponse: JsonResponseStruct =
+    val io: IO                  = IO(ioID, None, None)
+    val ioCommands: Array[Byte] = io.toJson.getBytes
+    val jsonResponse: ImageFlowResponseStruct =
       imageFlowNativeLibrary.imageflow_context_send_json(context, GetImageInfo.api, ioCommands, ioCommands.length)
-    JsonResponse.parse(jsonResponse)
+
+    import com.dealermade.imageflow.entities.ImageFlowResponse._
+    jsonResponse.data.get().fromJson[ImageFlowResponse]
   }
 
-  def processImage(): JsonResponse = {
+  def processImage(): Either[String, ImageFlowResponse] = {
     val commands: Array[Byte] = getCommands
-    val jsonResponse: JsonResponseStruct =
+    val jsonResponse: ImageFlowResponseStruct =
       imageFlowNativeLibrary.imageflow_context_send_json(context, Execute.api, commands, commands.length)
-    JsonResponse.parse(jsonResponse)
+    jsonResponse.data.get().fromJson[ImageFlowResponse]
   }
 
   def writeOutputImage(ioID: Int): Array[Byte] = {
@@ -81,11 +80,9 @@ protected[jobs] case class ImageJob(filePath: String,
   }
 
   def writeOutputImageToFile(ioID: Int, filePath: String): File = {
-    import better.files._
-
     val imageBuffer: Array[Byte] = writeOutputImage(ioID)
     val file: File               = File(filePath)
-    file.writeByteArray(imageBuffer)
+    file.writeAll(imageBuffer.map(_.toChar).mkString)
     file
   }
 }
@@ -102,12 +99,14 @@ protected[jobs] case class ImageJob(filePath: String,
   * @param imageFlowNative the image flow native library
   * @param context the pointer to the created image flow context
   */
-protected[dealermade] case class ImageJobBuilder(filePath: String,
-                                                 ioMode: IoMode,
-                                                 lifetime: Lifetime,
-                                                 io: Set[IO] = Set.empty,
-                                                 steps: Vector[Step] = Vector.empty,
-                                                 security: Option[Security] = Option.empty)(
+protected[dealermade] case class ImageJobBuilder(
+    filePath: String,
+    ioMode: IoMode,
+    lifetime: Lifetime,
+    io: Set[IO] = Set.empty,
+    steps: Vector[Step] = Vector.empty,
+    security: Option[Security] = None
+)(
     implicit imageFlowNative: ImageFlowNative,
     implicit val context: Pointer
 ) {
@@ -130,13 +129,16 @@ protected[dealermade] case class ImageJobBuilder(filePath: String,
     copy(steps = newSteps)
   }
 
-  def constrain(mode: Option[ConstrainMode],
-                width: Option[Int] = Option.empty,
-                height: Option[Int] = Option.empty,
-                gravity: Option[Gravity] = Option.empty,
-                canvasColor: Option[String] = Option.empty,
-                hints: Option[Hints] = Option.empty): ImageJobBuilder = {
-    val constrainMode: Option[String] = mode.fold { Option.empty[String] } { constrainModeString =>
+  def constrain(
+      mode: Option[ConstrainMode],
+      width: Option[Int] = None,
+      height: Option[Int] = None,
+      gravity: Option[Gravity] = None,
+      canvasColor: Option[String] = None,
+      hints: Option[Hints] = None
+  ): ImageJobBuilder = {
+    // We should use Option.empty[String] because None doesn't require any type parameters
+    val constrainMode: Option[String] = mode.fold(Option.empty[String]) { constrainModeString =>
       Some(constrainModeString.value)
     }
     val constrainStep: ConstrainStep = ConstrainStep(constrainMode, width, height, gravity, canvasColor, hints)
@@ -146,8 +148,9 @@ protected[dealermade] case class ImageJobBuilder(filePath: String,
   }
 
   def decode(ioID: Int, commands: Vector[DecodeStep] = Vector.empty): ImageJobBuilder = {
-    val decode: Decode         = Decode(ioID, commands)
-    val newSteps: Vector[Step] = addCommand(decode)
+    val maybeCommands: Option[Vector[DecodeStep]] = if (commands.isEmpty) None else Some(commands)
+    val decode: Decode                            = Decode(ioID, maybeCommands)
+    val newSteps: Vector[Step]                    = addCommand(decode)
     copy(steps = newSteps, io = io + IO(ioID, Some(In.value)))
   }
 

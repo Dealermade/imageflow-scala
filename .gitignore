@@ -126,3 +126,10 @@ project/plugins/project/
 *.log
 
 # End of https://www.toptal.com/developers/gitignore/api/scala,sbt,intellij
+
+.metals
+
+metals.sbt
+
+.bloop
+.updates.lock

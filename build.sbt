@@ -1,21 +1,20 @@
-import sbt._
-import Keys._
-import com.dealermade.imageflow.Dependencies._
+name := "imageflow-scala"
+organization := "com.dealermade"
+version := "0.0.0.2"
 
-lazy val root = project
-	.in(file("."))
-	.settings(
-		name := "imageflow-scala",
-		version := "0.0.1",
-		// Due to the sbt limitation, add fork := true to build.sbt refer to https://github.com/bytedeco/sbt-javacpp/#usage
-		fork := true,
-		Seq(
-			organization := "com.dealermade",
-			scalaVersion := Scala.version
-		),
-		mainClass in (Compile, run) := Some("com.dealermade.imageflow.Main"),
-		scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Xlint", "-Xlog-free-terms"),
-		libraryDependencies ++= dependencies(scalaJHttp.value, sprayJson.value, betterFiles.value, jnrFFI.value) ++ testDependencies(scalaTest.value),
-	)
+scalaVersion := "2.13.4"
 
+scalacOptions --= Seq(
+  "-Xfatal-warnings",
+  "-Ymacro-annotations"
+)
 
+scalacOptions ++= Seq(
+  "-deprecation"
+)
+
+resolvers ++= Seq(
+  Resolver.sonatypeRepo("releases"),
+  Resolver.sonatypeRepo("snapshots"),
+  Resolver.bintrayRepo("jarlakxen", "maven")
+)

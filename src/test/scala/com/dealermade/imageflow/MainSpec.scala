@@ -1,6 +1,5 @@
 package com.dealermade.imageflow.jobs
 
-import better.files._
 import com.dealermade.imageflow.entities.{ AspectCrop, LossyPNG, PNGQuant }
 import com.dealermade.imageflow.jobs.{ ImageJob, ImageJobBuilder }
 import com.dealermade.imageflow.native._
@@ -23,7 +22,7 @@ object MainSpec extends App {
   val context: Pointer = ImageFlowNative.createContext(version)
 
   val imageJob: ImageJob =
-    ImageJobBuilder(Resource.getUrl("jpeg2000-home.jpg").getPath, None, OutlivesContext)(
+    ImageJobBuilder(getClass.getResource("/jpeg2000-home.jpg").getPath, None, OutlivesContext)(
       imageFlowNativeLibrary,
       context
     ).decode(None.value)
