@@ -132,3 +132,4 @@ project/plugins/project/
 metals.sbt
 
 .bloop
+.updates.lock
