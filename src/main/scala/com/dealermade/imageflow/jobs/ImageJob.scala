@@ -58,14 +58,14 @@ protected[jobs] case class ImageJob(filePath: String,
 
     val io: IO                  = IO(ioID, None, None)
     val ioCommands: Array[Byte] = io.toJson.toString().getBytes
-    val jsonResponse: JsonResponseStruct =
+    val jsonResponse: ImageFlowResponseStruct =
       imageFlowNativeLibrary.imageflow_context_send_json(context, GetImageInfo.api, ioCommands, ioCommands.length)
     JsonResponse.parse(jsonResponse)
   }
 
   def processImage(): JsonResponse = {
     val commands: Array[Byte] = getCommands
-    val jsonResponse: JsonResponseStruct =
+    val jsonResponse: ImageFlowResponseStruct =
       imageFlowNativeLibrary.imageflow_context_send_json(context, Execute.api, commands, commands.length)
     JsonResponse.parse(jsonResponse)
   }

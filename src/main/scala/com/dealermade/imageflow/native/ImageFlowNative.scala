@@ -1,10 +1,9 @@
 package com.dealermade.imageflow.native
 import com.dealermade.imageflow.entities.JsonResponseStruct
-import com.dealermade.imageflow.utils.NativeUtils
-import jnr.ffi.annotations.{In, Out, SaveError}
-import jnr.ffi.{LibraryLoader, Pointer}
-import jnr.ffi.byref.{LongLongByReference, PointerByReference}
-import jnr.ffi.types.{int32_t, ssize_t}
+import jnr.ffi.annotations.{ In, Out, SaveError }
+import jnr.ffi.{ LibraryLoader, Pointer }
+import jnr.ffi.byref.{ LongLongByReference, PointerByReference }
+import jnr.ffi.types.{ int32_t, ssize_t }
 
 import java.nio.file.Paths
 
@@ -138,11 +137,13 @@ trait ImageFlowNative {
 	 *
 	 * C/C++ signature: bool imageflow_context_add_input_buffer(struct imageflow_context *context, int32_t io_id, const uint8_t *buffer, size_t buffer_byte_count, imageflow_lifetime lifetime);
 	 */
-  def imageflow_context_add_input_buffer(context: Pointer,
-                                         @In ioMode: Int,
-                                         buffer: Pointer,
-                                         count: Long,
-                                         lifetime: Int): Boolean
+  def imageflow_context_add_input_buffer(
+      context: Pointer,
+      @In ioMode: Int,
+      buffer: Pointer,
+      count: Long,
+      lifetime: Int
+  ): Boolean
 
   /**
 	 * Adds an output buffer to the job context.
@@ -170,10 +171,12 @@ trait ImageFlowNative {
 	 *         const uint8_t **result_buffer,
 	 *         size_t *result_buffer_length);
 	 */
-  def imageflow_context_get_output_buffer_by_id(context: Pointer,
-                                                @In @int32_t ioMode: Int,
-                                                @Out resultBuffer: PointerByReference,
-                                                @Out resultBufferLength: LongLongByReference): Pointer
+  def imageflow_context_get_output_buffer_by_id(
+      context: Pointer,
+      @In @int32_t ioMode: Int,
+      @Out resultBuffer: PointerByReference,
+      @Out resultBufferLength: LongLongByReference
+  ): Pointer
 
   /**
 	 * Prints the error messages (and optional stack frames) to the given buffer in UTF-8 form; writes a null
@@ -195,10 +198,12 @@ trait ImageFlowNative {
 	 *         size_t buffer_length,
 	 *         size_t *bytes_written);
 	 */
-  def imageflow_context_error_write_to_buffer(context: Pointer,
-                                              buffer: Array[Byte],
-                                              @ssize_t bufferLength: Long,
-                                              @Out bytesWritten: LongLongByReference): Boolean
+  def imageflow_context_error_write_to_buffer(
+      context: Pointer,
+      buffer: Array[Byte],
+      @ssize_t bufferLength: Long,
+      @Out bytesWritten: LongLongByReference
+  ): Boolean
 
   /**
 	 * Converts the error (or lack thereof) into an equivalent http status code
@@ -248,10 +253,12 @@ trait ImageFlowNative {
 	 *         const uint8_t *json_buffer,
 	 *         size_t json_buffer_size);
 	 */
-  def imageflow_context_send_json(context: Pointer,
-                                  method: String,
-                                  @In jsonBuffer: Array[Byte],
-                                  @In @ssize_t jsonBufferSize: Long): JsonResponseStruct
+  def imageflow_context_send_json(
+      context: Pointer,
+      method: String,
+      @In jsonBuffer: Array[Byte],
+      @In @ssize_t jsonBufferSize: Long
+  ): ImageFlowResponseStruct
 
   /**
 	 * These will be stabilized after 1.0, once error categories have passed rigorous real-world testing
@@ -395,7 +402,7 @@ object ImageFlowNative {
 
   def getErrorBytes(offset: Int = 1024)(
       implicit imageFlowNativeLibrary: ImageFlowNative,
-      context: Pointer,
+      context: Pointer
   ): (Array[Byte], Int) = {
     val errorBuffer: Array[Byte]          = new Array[Byte](offset)
     val bytesWritten: LongLongByReference = new LongLongByReference()
@@ -405,7 +412,7 @@ object ImageFlowNative {
 
   def getError(offset: Int = 1024)(
       implicit imageFlowNativeLibrary: ImageFlowNative,
-      context: Pointer,
+      context: Pointer
   ): String = {
     val (errorBuffer, _): (Array[Byte], Int) = getErrorBytes()
     errorBuffer.map(_.toChar).mkString
