@@ -44,13 +44,13 @@ object MainSpec extends App {
   val imageInfo = imageJob.getImageInfo(None.value)
   println(imageInfo)
 
-//  val isDone: Boolean = imageJob.addOutputBuffer(ReadSequential)
-//  if (isDone) {
-//    val imageProcessingResponse = imageJob.processImage()
-//    println(imageProcessingResponse)
-//    imageJob.writeOutputImageToFile(ReadSequential.value, "src/test/resources/test.png")
-//  } else {
-//    throw new RuntimeException(s"An error occurred while writing the image output")
-//  }
+  val isDone: Boolean = imageJob.addOutputBuffer(ReadSequential)
+  if (isDone) {
+    val imageProcessingResponse = imageJob.processImage()
+    println(imageProcessingResponse)
+    imageJob.writeOutputImageToFile(ReadSequential.value, "src/test/resources/test.png")
+  } else {
+    throw new RuntimeException(s"An error occurred while writing the image output")
+  }
 
 }

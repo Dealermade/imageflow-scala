@@ -65,15 +65,6 @@ case object FitPad extends ConstrainMode("fit_pad")
 
 case class ImageFlow(io: Vector[IO], framewise: Framwise, security: Option[Security])
 object ImageFlow {
-  implicit val encoder: JsonEncoder[ImageFlow] = DeriveJsonEncoder.gen[ImageFlow]
-  implicit val ioEncoder: JsonEncoder[IO]      = DeriveJsonEncoder.gen[IO]
-
-  implicit val securityEncoder: JsonEncoder[Security]           = DeriveJsonEncoder.gen[Security]
-  implicit val securityImageEncoder: JsonEncoder[SecurityImage] = DeriveJsonEncoder.gen[SecurityImage]
-
-  implicit val framwiseEncoder: JsonEncoder[Framwise]                   = DeriveJsonEncoder.gen[Framwise]
-  implicit val stepEncoder: JsonEncoder[Step]                           = DeriveJsonEncoder.gen[Step]
-  implicit val constrainStepEncoder: JsonEncoder[ConstrainStep]         = DeriveJsonEncoder.gen[ConstrainStep]
   implicit val gravityEncoder: JsonEncoder[Gravity]                     = DeriveJsonEncoder.gen[Gravity]
   implicit val coordinationEncoder: JsonEncoder[Coordination]           = DeriveJsonEncoder.gen[Coordination]
   implicit val decodeStepEncoder: JsonEncoder[DecodeStep]               = DeriveJsonEncoder.gen[DecodeStep]
@@ -84,6 +75,14 @@ object ImageFlow {
   implicit val mozJPEGEncoder: JsonEncoder[MozJPEG]                     = DeriveJsonEncoder.gen[MozJPEG]
   implicit val lodePNGEncoder: JsonEncoder[LodePNG]                     = DeriveJsonEncoder.gen[LodePNG]
   implicit val pngQuantEncoder: JsonEncoder[PNGQuant]                   = DeriveJsonEncoder.gen[PNGQuant]
+  implicit val constrainStepEncoder: JsonEncoder[ConstrainStep]         = DeriveJsonEncoder.gen[ConstrainStep]
+  implicit val stepEncoder: JsonEncoder[Step]                           = DeriveJsonEncoder.gen[Step]
+  implicit val framwiseEncoder: JsonEncoder[Framwise]                   = DeriveJsonEncoder.gen[Framwise]
+  implicit val securityEncoder: JsonEncoder[Security]                   = DeriveJsonEncoder.gen[Security]
+  implicit val securityImageEncoder: JsonEncoder[SecurityImage]         = DeriveJsonEncoder.gen[SecurityImage]
+  implicit val ioEncoder: JsonEncoder[IO]                               = DeriveJsonEncoder.gen[IO]
+  implicit val encoder: JsonEncoder[ImageFlow]                          = DeriveJsonEncoder.gen[ImageFlow]
+
 }
 
 /**
@@ -105,28 +104,29 @@ case class Framwise(steps: Vector[Step])
 
 sealed trait Step
 
-case class Rotation(rotation: String)                      extends Step
-case class Flip(flip: String)                              extends Step
-case class Transpose(transpose: String)                    extends Step
-case class Decode(ioID: Int, commands: Vector[DecodeStep]) extends Step
+case class Rotation(rotation: String)                                                  extends Step
+case class Flip(flip: String)                                                          extends Step
+case class Transpose(transpose: String)                                                extends Step
+case class Decode(@jsonField("io_id") ioID: Int, commands: Option[Vector[DecodeStep]]) extends Step
 
 sealed trait DecodeStep
 case class DiscardColorProfile(value: String = "discard_color_profile")            extends DecodeStep
 case class IgnoreColorProfileErrors(value: String = "ignore_color_profile_errors") extends DecodeStep
 
-case class JpegDownscaleHints(jpegDownscaleHints: JpegDownscaleHint) extends DecodeStep
+case class JpegDownscaleHints(@jsonField("jpeg_downscale_hints") jpegDownscaleHints: JpegDownscaleHint)
+    extends DecodeStep
 case class JpegDownscaleHint(
     width: Int,
     height: Int,
-    scaleLumaSpatially: Boolean,
-    gammaCorrectForSrgbDuringSpatialLumaScaling: Boolean
+    @jsonField("scale_luma_spatially") scaleLumaSpatially: Boolean,
+    @jsonField("gamma_correct_for_srgb_during_spatial_luma_scaling") gammaCorrectForSrgbDuringSpatialLumaScaling: Boolean
 )
 
-case class WebpDecoderHints(webpDecoderHints: WebpDecoderHint) extends DecodeStep
+case class WebpDecoderHints(@jsonField("webp_decoder_hints") webpDecoderHints: WebpDecoderHint) extends DecodeStep
 case class WebpDecoderHint(width: Int, height: Int)
 
-case class Encode(ioID: Int, preset: Preset)   extends Step
-case class Constrain(constrain: ConstrainStep) extends Step
+case class Encode(@jsonField("io_id") ioID: Int, preset: Preset) extends Step
+case class Constrain(constrain: ConstrainStep)                   extends Step
 
 /**
   *
@@ -142,13 +142,13 @@ case class Constrain(constrain: ConstrainStep) extends Step
   */
 case class ConstrainStep(
     mode: Option[String] = None,
-    width: Option[Int] = None,
-    height: Option[Int] = None,
+    @jsonField("w") width: Option[Int] = None,
+    @jsonField("h") height: Option[Int] = None,
     gravity: Option[Gravity] = None,
-    canvasColor: Option[String] = None,
+    @jsonField("canvas_color") canvasColor: Option[String] = None,
     hints: Option[Hints] = None
 )
-case class Hints(sharpenPercent: Int)
+case class Hints(@jsonField("sharpen_percent") sharpenPercent: Int)
 case class Gravity(percentage: Coordination)
 case class Coordination(x: Int, y: Int)
 
@@ -163,15 +163,15 @@ case class MozJPEG(quality: Int, progressive: Boolean)
 case class GIF(value: String = "gif")           extends Preset
 case class WebP(value: String = "webplossless") extends Preset
 
-case class LosslessPNG(lodePNG: LodePNG) extends Preset
-case class LodePNG(maximumDeflate: Boolean)
+case class LosslessPNG(@jsonField("lodepng") lodePNG: LodePNG) extends Preset
+case class LodePNG(@jsonField("maximum_deflate") maximumDeflate: Boolean)
 
-case class LossyPNG(pngQuant: PNGQuant) extends Preset
+case class LossyPNG(@jsonField("pngquant") pngQuant: PNGQuant) extends Preset
 case class PNGQuant(
     quality: Int = 100,
     speed: Option[Int] = None,
-    minimumQuality: Option[Int] = None,
-    maximumDeflate: Option[Boolean] = None
+    @jsonField("minimum_quality") minimumQuality: Option[Int] = None,
+    @jsonField("maximum_deflate") maximumDeflate: Option[Boolean] = None
 )
 // TODO implement this
 //  https://docs.imageflow.io/json/region.html

@@ -66,9 +66,11 @@ case class EncodeResult(
     bytes: String
 ) extends ProcessingResult
 
-case class ImageFlowResponse(code: Int, success: Boolean, message: String, data: Option[ImageInfo])
+case class ImageFlowResponse(code: Int, success: Boolean, message: String, data: Option[ResponsePayload])
 
 object ImageFlowResponse {
+  implicit val responsePayloadDecoder: JsonDecoder[ResponsePayload] = DeriveJsonDecoder.gen[ResponsePayload]
+
   implicit val encodeResultDecoder: JsonDecoder[EncodeResult]             = DeriveJsonDecoder.gen[EncodeResult]
   implicit val decodeResultDecoder: JsonDecoder[DecodeResult]             = DeriveJsonDecoder.gen[DecodeResult]
   implicit val buildPerformanceDecoder: JsonDecoder[BuildPerformance]     = DeriveJsonDecoder.gen[BuildPerformance]
@@ -78,7 +80,6 @@ object ImageFlowResponse {
   implicit val imageInfoPayloadDecoder: JsonDecoder[ImageInfoPayload]     = DeriveJsonDecoder.gen[ImageInfoPayload]
   implicit val jobResultPayloadDecoder: JsonDecoder[JobResultPayload]     = DeriveJsonDecoder.gen[JobResultPayload]
   implicit val imageInfoDecoder: JsonDecoder[ImageInfo]                   = DeriveJsonDecoder.gen[ImageInfo]
-  implicit val responsePayloadDecoder: JsonDecoder[ResponsePayload]       = DeriveJsonDecoder.gen[ResponsePayload]
   implicit val decoder: JsonDecoder[ImageFlowResponse]                    = DeriveJsonDecoder.gen[ImageFlowResponse]
 
   /*

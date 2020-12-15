@@ -27,6 +27,7 @@ protected[jobs] case class ImageJob(
   def getCommands: Array[Byte] = {
     val framwise: Framwise   = Framwise(steps)
     val imageFlow: ImageFlow = ImageFlow(io.toVector, framwise, None)
+    import com.dealermade.imageflow.entities.ImageFlow._
     imageFlow.toJson.getBytes
   }
 
@@ -147,8 +148,9 @@ protected[dealermade] case class ImageJobBuilder(
   }
 
   def decode(ioID: Int, commands: Vector[DecodeStep] = Vector.empty): ImageJobBuilder = {
-    val decode: Decode         = Decode(ioID, commands)
-    val newSteps: Vector[Step] = addCommand(decode)
+    val maybeCommands: Option[Vector[DecodeStep]] = if (commands.isEmpty) None else Some(commands)
+    val decode: Decode                            = Decode(ioID, maybeCommands)
+    val newSteps: Vector[Step]                    = addCommand(decode)
     copy(steps = newSteps, io = io + IO(ioID, Some(In.value)))
   }
 
