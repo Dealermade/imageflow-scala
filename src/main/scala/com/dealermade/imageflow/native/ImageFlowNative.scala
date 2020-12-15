@@ -1,10 +1,9 @@
 package com.dealermade.imageflow.native
-import com.dealermade.imageflow.entities.JsonResponseStruct
+import com.dealermade.imageflow.entities.ImageFlowResponseStruct
 import jnr.ffi.annotations.{ In, Out, SaveError }
 import jnr.ffi.{ LibraryLoader, Pointer }
 import jnr.ffi.byref.{ LongLongByReference, PointerByReference }
 import jnr.ffi.types.{ int32_t, ssize_t }
-
 import java.nio.file.Paths
 
 sealed abstract class Direction(val value: String)
@@ -327,7 +326,7 @@ object ImageFlowNative {
 	 */
   def apply(): ImageFlowNative = {
     val nativeLibraryName: String = "libimageflow"
-    System.setProperty("jnr.ffi.library.path", Paths.get("src/main/resources").toAbsolutePath.toString)
+    System.setProperty("jnr.ffi.library.path", Paths.get("src/main/resources/imageflow-binary").toAbsolutePath.toString)
     LibraryLoader.create(classOf[ImageFlowNative]).load(nativeLibraryName)
   }
 

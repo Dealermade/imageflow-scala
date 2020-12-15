@@ -1,6 +1,5 @@
-package com.dealermade.imageflow
+package com.dealermade.imageflow.jobs
 
-import better.files._
 import com.dealermade.imageflow.entities.{ AspectCrop, LossyPNG, PNGQuant }
 import com.dealermade.imageflow.jobs.{ ImageJob, ImageJobBuilder }
 import com.dealermade.imageflow.native._
@@ -23,7 +22,7 @@ object MainSpec extends App {
   val context: Pointer = ImageFlowNative.createContext(version)
 
   val imageJob: ImageJob =
-    ImageJobBuilder(Resource.getUrl("jpeg2000-home.jpg").getPath, None, OutlivesContext)(
+    ImageJobBuilder(getClass.getResource("/jpeg2000-home.jpg").getPath, None, OutlivesContext)(
       imageFlowNativeLibrary,
       context
     ).decode(None.value)
@@ -45,13 +44,13 @@ object MainSpec extends App {
   val imageInfo = imageJob.getImageInfo(None.value)
   println(imageInfo)
 
-  val isDone: Boolean = imageJob.addOutputBuffer(ReadSequential)
-  if (isDone) {
-    val imageProcessingResponse = imageJob.processImage()
-    println(imageProcessingResponse)
-    imageJob.writeOutputImageToFile(ReadSequential.value, "src/test/resources/test.png")
-  } else {
-    throw new RuntimeException(s"An error occurred while writing the image output")
-  }
+//  val isDone: Boolean = imageJob.addOutputBuffer(ReadSequential)
+//  if (isDone) {
+//    val imageProcessingResponse = imageJob.processImage()
+//    println(imageProcessingResponse)
+//    imageJob.writeOutputImageToFile(ReadSequential.value, "src/test/resources/test.png")
+//  } else {
+//    throw new RuntimeException(s"An error occurred while writing the image output")
+//  }
 
 }
