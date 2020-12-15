@@ -1,6 +1,6 @@
 package com.dealermade.imageflow.jobs
 
-import com.dealermade.imageflow.entities.{ AspectCrop, LossyPNG, PNGQuant }
+import com.dealermade.imageflow.entities.libimageflow.{ AspectCrop, LossyPNG, PNGQuant }
 import com.dealermade.imageflow.jobs.{ ImageJob, ImageJobBuilder }
 import com.dealermade.imageflow.native._
 import jnr.ffi.Pointer
