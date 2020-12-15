@@ -1,21 +1,20 @@
 name := "imageflow-scala"
 organization := "com.dealermade"
-version := "0.0.0.1"
+version := "0.0.0.2"
 
 scalaVersion := "2.13.4"
 
 scalacOptions --= Seq(
-	"-Xfatal-warnings",
-	"-Ymacro-annotations"
+  "-Xfatal-warnings",
+  "-Ymacro-annotations"
 )
 
 scalacOptions ++= Seq(
-	"-deprecation"
+  "-deprecation"
 )
 
 resolvers ++= Seq(
-	Resolver.sonatypeRepo("releases"),
-	Resolver.sonatypeRepo("snapshots"),
-	Resolver.bintrayRepo("jarlakxen", "maven")
+  Resolver.sonatypeRepo("releases"),
+  Resolver.sonatypeRepo("snapshots"),
+  Resolver.bintrayRepo("jarlakxen", "maven")
 )
-
