@@ -154,7 +154,7 @@ trait ImageFlowNative {
 	 *
 	 * C/C++ signature: bool imageflow_context_add_output_buffer(struct imageflow_context *context, int32_t io_id);
 	 */
-  def imageflow_context_add_output_buffer(context: Pointer, @In ioMode: Int): Boolean
+  def imageflow_context_add_output_buffer(context: Pointer, @JnrIn ioMode: Int): Boolean
 
   /**
 	 * Provides access to the underlying buffer for the given io id
