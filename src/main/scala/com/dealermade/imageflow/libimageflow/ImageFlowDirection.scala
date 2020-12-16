@@ -1,4 +1,4 @@
-package com.dealermade.imageflow.entities.libimageflow
+package com.dealermade.imageflow.libimageflow
 
 sealed abstract class ImageFlowDirection(val value: String)
 case object ImageFlowIn extends ImageFlowDirection("in")

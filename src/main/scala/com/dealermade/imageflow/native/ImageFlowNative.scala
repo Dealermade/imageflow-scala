@@ -1,5 +1,5 @@
 package com.dealermade.imageflow.native
-import com.dealermade.imageflow.entities.libimageflow._
+import com.dealermade.imageflow.libimageflow._
 import jnr.ffi.annotations.{ SaveError, In => JnrIn, Out => JnrOut }
 import jnr.ffi.{ LibraryLoader, Pointer }
 import jnr.ffi.byref.{ LongLongByReference, PointerByReference }
@@ -311,7 +311,7 @@ object ImageFlowNative {
 	 * @return a new image flow native library instance
    */
   def apply(): ImageFlowNative = {
-    val nativeLibraryName: String = "libimageflow"
+    val nativeLibraryName: String = "imageflow"
     System.setProperty(
       "jnr.ffi.library.path",
       Paths.get("src/main/resources/imageflow-binary").toAbsolutePath.toString

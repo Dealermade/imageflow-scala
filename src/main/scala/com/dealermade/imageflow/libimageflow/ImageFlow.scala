@@ -1,10 +1,10 @@
-package com.dealermade.imageflow.entities.libimageflow
+package com.dealermade.imageflow.libimageflow
 
 import zio.json.internal.Write
 import zio.json.{ jsonField, DeriveJsonEncoder, JsonEncoder }
-import com.dealermade.imageflow.entities.libimageflow.EncodePreset._
-import com.dealermade.imageflow.entities.libimageflow.ImageFlowDecodeStep._
-import com.dealermade.imageflow.entities.libimageflow.ImageFlowStep._
+import com.dealermade.imageflow.libimageflow.EncodePreset._
+import com.dealermade.imageflow.libimageflow.ImageFlowDecodeStep._
+import com.dealermade.imageflow.libimageflow.ImageFlowStep._
 
 case class ImageFlow(io: Vector[IO], framewise: Framwise, security: Option[Security])
 object ImageFlow {

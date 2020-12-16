@@ -1,4 +1,4 @@
-package com.dealermade.imageflow.entities.libimageflow
+package com.dealermade.imageflow.libimageflow
 
 import zio.json.jsonField
 
