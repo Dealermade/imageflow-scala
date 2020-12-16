@@ -1,32 +1,19 @@
 package com.dealermade.imageflow.native
-import com.dealermade.imageflow.entities.libimageflow.ImageFlowResponseStruct
-import jnr.ffi.annotations.{ In => JnrIn, Out => JnrOut, SaveError }
-import jnr.ffi.{ LibraryLoader, Pointer }
-import jnr.ffi.byref.{ LongLongByReference, PointerByReference }
-import jnr.ffi.types.{ int32_t, ssize_t }
+import com.dealermade.imageflow.entities.libimageflow._
+import jnr.ffi.annotations.{SaveError, In => JnrIn, Out => JnrOut}
+import jnr.ffi.{LibraryLoader, Pointer}
+import jnr.ffi.byref.{LongLongByReference, PointerByReference}
+import jnr.ffi.types.{int32_t, ssize_t}
+
 import java.nio.file.Paths
+import zio.{Task, URIO}
 
 sealed abstract class Direction(val value: String)
 case object In  extends Direction("in")
 case object Out extends Direction("out")
 
-sealed abstract class IoMode(val value: Int)
-case object None              extends IoMode(0)
-case object ReadSequential    extends IoMode(1)
-case object WriteSequential   extends IoMode(2)
-case object ReadSeekable      extends IoMode(5)
-case object WriteSeekable     extends IoMode(6)
-case object ReadWriteSeekable extends IoMode(15)
 
-sealed abstract class Lifetime(val value: Int)
-case object OutlivesFunctionCall extends Lifetime(0)
-case object OutlivesContext      extends Lifetime(1)
 
-sealed abstract class ImageFlowApi(val api: String)
-case object GetImageInfo extends ImageFlowApi("v0.1/get_image_info")
-case object Execute      extends ImageFlowApi("v1/execute")
-
-case class ImageFlowVersion(versionMajor: Long, versionMinor: Long)
 
 trait ImageFlowNative {
 
@@ -336,57 +323,12 @@ object ImageFlowNative {
 	 * @param imageFlowNativeLibrary you should provide implicitly the library
 	 * @return an instance of ImageFlowVersion which contains the major and minor version
 	 */
-  def getVersion()(implicit imageFlowNativeLibrary: ImageFlowNative): ImageFlowVersion = {
-    val versionMajor: Long = imageFlowNativeLibrary.imageflow_abi_version_major()
-    val versionMinor: Long = imageFlowNativeLibrary.imageflow_abi_version_minor()
-    ImageFlowVersion(versionMajor, versionMinor)
-  }
-
-  /**
-	 * Check if for the given version is compatible or not
-	 *
-	 * @param versionMajor the major version
-	 * @param versionMinor the minor version
-	 * @param imageFlowNativeLibrary you should provide implicitly the library
-	 * @return true if it's compatible, false otherwise
-	 */
-  def isCompatible(versionMajor: Long, versionMinor: Long)(implicit imageFlowNativeLibrary: ImageFlowNative): Boolean =
-    imageFlowNativeLibrary.imageflow_abi_compatible(versionMajor, versionMinor)
-
-  /**
-	 * Check if for the given version is compatible or not
-	 *
-	 * @param imageFlowVersion an instance of ImageFlowVersion which contains the version
-	 * @param imageFlowNativeLibrary you should provide implicitly the library
-	 * @return true if it's compatible, false otherwise
-	 */
-  def isCompatible(imageFlowVersion: ImageFlowVersion)(implicit imageFlowNativeLibrary: ImageFlowNative): Boolean =
-    imageFlowNativeLibrary.imageflow_abi_compatible(imageFlowVersion.versionMajor, imageFlowVersion.versionMinor)
-
-  /**
-	 * Create an image flow context with a given version
-	 * You should handle the errors if the version is not compatible,
-	 * use createContext() if you are not sure about the version
-	 *
-	 * @param versionMajor the major version
-	 * @param versionMinor the minor version
-	 * @param imageFlowNativeLibrary you should provide implicitly the library
-	 * @return the created image flow context
-	 */
-  def createContext(versionMajor: Long, versionMinor: Long)(implicit imageFlowNativeLibrary: ImageFlowNative): Pointer =
-    imageFlowNativeLibrary.imageflow_context_create(versionMajor, versionMinor)
-
-  /**
-	 * Create an image flow context with a given version
-	 * You should handle the errors if the version is not compatible,
-	 * use createContext() if you are not sure about the version
-	 *
-	 * @param imageFlowVersion an instance of ImageFlowVersion which contains the version
-	 * @param imageFlowNativeLibrary you should provide implicitly the library
-	 * @return the created image flow context
-	 */
-  def createContext(imageFlowVersion: ImageFlowVersion)(implicit imageFlowNativeLibrary: ImageFlowNative): Pointer =
-    imageFlowNativeLibrary.imageflow_context_create(imageFlowVersion.versionMajor, imageFlowVersion.versionMinor)
+  def getVersion()(implicit imageFlowNativeLibrary: ImageFlowNative): Task[ImageFlowVersion] = for {
+    versionMajor: Long <- Task.effect(imageFlowNativeLibrary.imageflow_abi_version_major())
+	versionMinor: Long <- Task.effect(imageFlowNativeLibrary.imageflow_abi_version_minor())
+	isCompatible: Boolean <- Task.effect(imageFlowNativeLibrary.imageflow_abi_compatible(versionMajor, versionMinor))
+	_ <- Task.fail("Imageflow Native: version major ${version.versionMajor} & version minor ${version.versionMinor} is not compatible").when(!isCompatible)
+  } yield ImageFlowVersion(versionMajor = versionMajor, versionMinor = versionMinor)
 
   /**
 	 * Create an image flow context
@@ -394,10 +336,11 @@ object ImageFlowNative {
 	 * @param imageFlowNativeLibrary you should provide implicitly the library
 	 * @return the created image flow context
 	 */
-  def createContext()(implicit imageFlowNativeLibrary: ImageFlowNative): Pointer = {
-    val version: ImageFlowVersion = ImageFlowNative.getVersion()
-    imageFlowNativeLibrary.imageflow_context_create(version.versionMajor, version.versionMinor)
-  }
+  def createContext()(implicit imageFlowNativeLibrary: ImageFlowNative): Task[Pointer] = for {
+	version: ImageFlowVersion <- ImageFlowNative.getVersion()
+	isCompatible: Boolean <- ImageFlowNative.isCompatible(version)
+    context: Pointer <- Task.effect(imageFlowNativeLibrary.imageflow_context_create(version.versionMajor, version.versionMinor))
+  } yield context
 
   def getErrorBytes(offset: Int = 1024)(
       implicit imageFlowNativeLibrary: ImageFlowNative,
@@ -417,6 +360,6 @@ object ImageFlowNative {
     errorBuffer.map(_.toChar).mkString
   }
 
-  def destroyContext()(implicit imageFlowNativeLibrary: ImageFlowNative, context: Pointer): Boolean =
-    imageFlowNativeLibrary.imageflow_context_begin_terminate(context)
+  def destroyContext(context: Pointer)(implicit imageFlowNativeLibrary: ImageFlowNative): Task[Boolean] =
+		Task.effect(imageFlowNativeLibrary.imageflow_context_begin_terminate(context))
 }

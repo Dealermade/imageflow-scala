@@ -6,6 +6,7 @@ import zio.Task
 
 object ImageFlowService {
   //private to this instance
+  private implicit lazy val imageFlowNativeLibrary: ImageFlowNative = ImageFlowNative()
 
   /*
   def hasErrors: Boolean = imageFlowNativeLibrary.imageflow_context_has_error()
@@ -16,12 +17,10 @@ object ImageFlowService {
 
   def getErrorCodeAsExitCode: Long = imageFlowNativeLibrary.imageflow_context_error_as_exit_code()
    */
-  /*
-ZIO bracket: ImageFlowNative.destroyContext(
   def resizeImages: Task[Unit] =
-    for {
-      imageFlowNativeLibrary: ImageFlowNative <- ImageFlowNative()
-      imageFlowContext: Pointer               <- ImageFlowNative.createContext()
-    } yield ()
- */
+    ImageFlowNative.createContext().bracket((d: Pointer) => ImageFlowNative.destroyContext()(imageFlowNativeLibrary)(d)) { implicit imageFlowContext: Pointer => {
+      for {
+        _ <- Task.fail(new Throwable("Nothing here yet, broken bracket"))
+      } yield ()
+    } 
 }

@@ -3,10 +3,8 @@ package com.dealermade.imageflow.jobs
 import java.nio.file.{ Files, Path, Paths }
 
 import zio.json._
-import com.dealermade.imageflow.entities._
-
 import com.dealermade.imageflow.entities.libimageflow._
-import com.dealermade.imageflow.native.{ Execute, GetImageInfo, ImageFlowNative, In, IoMode, Lifetime, Out }
+import com.dealermade.imageflow.native.{ ImageFlowNative, In, Out }
 import jnr.ffi.byref.{ LongLongByReference, PointerByReference }
 import jnr.ffi.{ Memory, Pointer, Runtime }
 
@@ -15,7 +13,7 @@ import scala.reflect.io.File
 protected[jobs] case class ImageJob(
     filePath: String,
     ioMode: IoMode,
-    lifetime: Lifetime,
+    lifetime: ImageBufferLifetime,
     io: Set[IO],
     steps: Vector[Step],
     security: Option[Security]
@@ -104,7 +102,7 @@ protected[jobs] case class ImageJob(
 protected[dealermade] case class ImageJobBuilder(
     filePath: String,
     ioMode: IoMode,
-    lifetime: Lifetime,
+    lifetime: ImageBufferLifetime,
     io: Set[IO] = Set.empty,
     steps: Vector[Step] = Vector.empty,
     security: Option[Security] = None
