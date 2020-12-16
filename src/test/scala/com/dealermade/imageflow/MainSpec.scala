@@ -1,27 +1,22 @@
-package com.dealermade.imageflow.jobs
+package com.dealermade.imageflow
 
-import com.dealermade.imageflow.entities.libimageflow.{ AspectCrop, LossyPNG, PNGQuant }
+import com.dealermade.imageflow.entities.libimageflow.{
+  ImageFlowVersion,
+  LossyPNG,
+  PNGQuant
+}
+import com.dealermade.imageflow.jobs.ImageJobBuilder
 import com.dealermade.imageflow.native._
 import jnr.ffi.Pointer
 
 object MainSpec extends App {
 
-  implicit val imageFlowNativeLibrary: ImageFlowNative = ImageFlowNative()
-
-  val version: ImageFlowVersion = ImageFlowNative.getVersion()
-  val isCompatible: Boolean     = ImageFlowNative.isCompatible(version)
-
-  println(
-    s"Imageflow Native: version major ${version.versionMajor} & version minor ${version.versionMinor} is ${if (isCompatible) "compatible"
-    else "not comptabile"}"
-  )
-
-  //  **Contexts are not thread-safe!** Once you create a context, *you* are responsible for ensuring that it is never involved in two overlapping API calls.
-  // Should add a lock
-  val context: Pointer = ImageFlowNative.createContext(version)
-
   val imageJob: ImageJob =
-    ImageJobBuilder(getClass.getResource("/jpeg2000-home.jpg").getPath, None, OutlivesContext)(
+    ImageJobBuilder(
+      getClass.getResource("/jpeg2000-home.jpg").getPath,
+      None,
+      OutlivesContext
+    )(
       imageFlowNativeLibrary,
       context
     ).decode(None.value)
@@ -48,8 +43,7 @@ object MainSpec extends App {
     val imageProcessingResponse = imageJob.processImage()
     println(imageProcessingResponse)
     imageJob.writeOutputImageToFile(ReadSequential.value, "src/test/resources/test.png")
-  } else {
+  } else
     throw new RuntimeException(s"An error occurred while writing the image output")
-  }
 
 }
