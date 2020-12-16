@@ -120,7 +120,7 @@ trait ImageFlowNative {
 	 *
 	 * C/C++ signature: bool imageflow_context_has_error(struct imageflow_context *context);
 	 */
-  def imageflow_context_has_error(implicit context: Pointer): Boolean
+  def imageflow_context_has_error()(implicit context: Pointer): Boolean
 
   /**
 	 * Adds an input buffer to the job context.
@@ -223,7 +223,7 @@ trait ImageFlowNative {
 	 *
 	 * C/C++ signature: int32_t imageflow_context_error_as_http_code(struct imageflow_context *context);
 	 */
-  def imageflow_context_error_as_http_code(context: Pointer): Long
+  def imageflow_context_error_as_http_code()(implicit context: Pointer): Long
 
   /**
 	 * Sends a JSON message to the `imageflow_context` using endpoint `method`.
@@ -291,7 +291,7 @@ trait ImageFlowNative {
 	 *
 	 * C/C++ signature int32_t imageflow_context_error_as_exit_code(struct imageflow_context *context);
 	 */
-  def imageflow_context_error_as_exit_code(context: Pointer): Int
+  def imageflow_context_error_as_exit_code()(implicit context: Pointer): Int
 
   /**
 	 * You must immediately deal with the error, as subsequent API calls will

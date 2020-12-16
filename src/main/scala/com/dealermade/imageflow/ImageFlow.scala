@@ -4,21 +4,24 @@ import com.dealermade.imageflow.native.ImageFlowNative
 import jnr.ffi.Pointer
 import zio.Task
 
-class ImageFlow {
+object ImageFlowService {
   //private to this instance
-  private[this] implicit lazy val imageFlowNativeLibrary: ImageFlowNative = ImageFlowNative()
-  private[this] implicit lazy val context: Pointer                        = ImageFlowNative.createContext()
 
-  def hasErrors: Boolean = imageFlowNativeLibrary.imageflow_context_has_error
+  /*
+  def hasErrors: Boolean = imageFlowNativeLibrary.imageflow_context_has_error()
 
   def getError(offset: Int = 1024): String = ImageFlowNative.getError(offset)
 
-  def getErrorHttpCode: Long = imageFlowNativeLibrary.imageflow_context_error_as_http_code(context)
+  def getErrorHttpCode: Long = imageFlowNativeLibrary.imageflow_context_error_as_http_code()
 
-  def getErrorCodeAsExitCode: Long = imageFlowNativeLibrary.imageflow_context_error_as_exit_code(context)
-
-  def destroyContext: Boolean = ImageFlowNative.destroyContext()
-
-  def resizeImages: Task[Unit] = ???
-
+  def getErrorCodeAsExitCode: Long = imageFlowNativeLibrary.imageflow_context_error_as_exit_code()
+   */
+  /*
+ZIO bracket: ImageFlowNative.destroyContext(
+  def resizeImages: Task[Unit] =
+    for {
+      imageFlowNativeLibrary: ImageFlowNative <- ImageFlowNative()
+      imageFlowContext: Pointer               <- ImageFlowNative.createContext()
+    } yield ()
+ */
 }
