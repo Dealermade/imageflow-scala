@@ -1,3 +1,3 @@
 # imageflow-scala
 
-Alpha Under development
+Proof of concept - possibly poorly designed on our part.
