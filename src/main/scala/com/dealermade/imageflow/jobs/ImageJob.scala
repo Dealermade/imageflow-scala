@@ -1,7 +1,8 @@
 package com.dealermade.imageflow.jobs
 
-import java.nio.file.{ Files, Path, Paths }
+import com.dealermade.imageflow.entities.libimageflow.ImageFlowStep
 
+import java.nio.file.{ Files, Path, Paths }
 import zio.json._
 import com.dealermade.imageflow.entities.libimageflow._
 import com.dealermade.imageflow.native.ImageFlowNative
@@ -15,25 +16,27 @@ protected[jobs] case class ImageJob(
   ioMode: IoMode,
   lifetime: ImageBufferLifetime,
   io: Set[IO],
-  steps: Vector[Step],
+  steps: Vector[ImageFlowStep],
   security: Option[Security]
 )(
   implicit val imageFlowNativeLibrary: ImageFlowNative,
   implicit val context: Pointer
 ) {
 
-  def getFileStream: Array[Byte] =
+  def getFileStream(): Array[Byte] =
     File(filePath).toByteArray()
 
-  def getCommands: Array[Byte] = {
+  def getCommandJson(): String = {
     val framwise: Framwise = Framwise(steps)
     val imageFlow: ImageFlow = ImageFlow(io.toVector, framwise, None)
-    import com.dealermade.imageflow.entities.libimageflow.ImageFlow._
-    imageFlow.toJson.getBytes
+    imageFlow.toJson
   }
 
+  def getCommandsAsBytes(): Array[Byte] =
+    getCommandJson().getBytes
+
   def addImageToContext(): Either[Boolean, String] = {
-    val buffer: Array[Byte] = getFileStream
+    val buffer: Array[Byte] = getFileStream()
     val offset: Int = buffer.length
     val pointer = Memory.allocateDirect(Runtime.getSystemRuntime, offset.toInt, true)
     pointer.put(0, buffer, 0, offset)
@@ -75,7 +78,7 @@ protected[jobs] case class ImageJob(
   }
 
   def processImage(): Either[String, JobResultResponse] = {
-    val commands: Array[Byte] = getCommands
+    val commands: Array[Byte] = getCommandsAsBytes()
     println(commands.map(_.toChar).mkString)
     val jsonResponse: ImageFlowResponseStruct =
       imageFlowNativeLibrary.imageflow_context_send_json(
@@ -125,7 +128,7 @@ protected[dealermade] case class ImageJobBuilder(
   ioMode: IoMode,
   lifetime: ImageBufferLifetime,
   io: Set[IO] = Set.empty,
-  steps: Vector[Step] = Vector.empty,
+  steps: Vector[ImageFlowStep] = Vector.empty,
   security: Option[Security] = None
 )(
   implicit imageFlowNative: ImageFlowNative,
@@ -143,7 +146,9 @@ protected[dealermade] case class ImageJobBuilder(
     )
 
   def flip(orientation: Orientation): ImageJobBuilder = {
-    val newSteps: Vector[Step] = addCommand(Flip(s"flip_${orientation.value}"))
+    val newSteps: Vector[ImageFlowStep] = addCommand(
+      ImageFlowStep.Flip(s"flip_${orientation.value}")
+    )
     copy(steps = newSteps)
   }
 
@@ -152,12 +157,14 @@ protected[dealermade] case class ImageJobBuilder(
       Vector(90, 180, 270).contains(rotation),
       s"The rotation $rotation is not yet supported."
     )
-    val newSteps: Vector[Step] = addCommand(Rotation(s"rotate_$rotation"))
+    val newSteps: Vector[ImageFlowStep] = addCommand(
+      ImageFlowStep.Rotation(s"rotate_$rotation")
+    )
     copy(steps = newSteps)
   }
 
   def transpose: ImageJobBuilder = {
-    val newSteps: Vector[Step] = addCommand(Transpose("transpose"))
+    val newSteps: Vector[ImageFlowStep] = addCommand(ImageFlowStep.Transpose("transpose"))
     copy(steps = newSteps)
   }
 
@@ -176,25 +183,29 @@ protected[dealermade] case class ImageJobBuilder(
     }
     val constrainStep: ConstrainStep =
       ConstrainStep(constrainMode, width, height, gravity, canvasColor, hints)
-    val constrain: Constrain = Constrain(constrainStep)
-    val newSteps: Vector[Step] = addCommand(constrain)
+    val constrain: ImageFlowStep.Constrain = ImageFlowStep.Constrain(constrainStep)
+    val newSteps: Vector[ImageFlowStep] = addCommand(constrain)
     copy(steps = newSteps)
   }
 
-  def decode(ioID: Int, commands: Vector[DecodeStep] = Vector.empty): ImageJobBuilder = {
-    val maybeCommands: Option[Vector[DecodeStep]] =
+  def decode(
+    ioID: Int,
+    commands: Vector[ImageFlowDecodeStep] = Vector.empty
+  ): ImageJobBuilder = {
+    val maybeCommands: Option[Vector[ImageFlowDecodeStep]] =
       if (commands.isEmpty) None else Some(commands)
-    val decode: Decode = Decode(ioID, maybeCommands)
-    val newSteps: Vector[Step] = addCommand(decode)
+    val decode: ImageFlowStep.Decode = ImageFlowStep.Decode(ioID, maybeCommands)
+    val newSteps: Vector[ImageFlowStep] = addCommand(decode)
     copy(steps = newSteps, io = io + IO(ioID, Some(ImageFlowIn.value)))
   }
 
-  def encode(ioID: Int, presets: Preset): ImageJobBuilder = {
-    val encode: Encode = Encode(ioID, presets)
-    val newSteps: Vector[Step] = addCommand(encode)
+  def encode(ioID: Int, presets: EncodePreset): ImageJobBuilder = {
+    val encode: ImageFlowStep.Encode = ImageFlowStep.Encode(ioID, presets)
+    val newSteps: Vector[ImageFlowStep] = addCommand(encode)
     copy(steps = newSteps, io = io + IO(ioID, Some(ImageFlowOut.value)))
   }
 
-  private[this] def addCommand(step: Step): Vector[Step] = this.steps :+ step
+  private[this] def addCommand(step: ImageFlowStep): Vector[ImageFlowStep] =
+    this.steps :+ step
 
 }
