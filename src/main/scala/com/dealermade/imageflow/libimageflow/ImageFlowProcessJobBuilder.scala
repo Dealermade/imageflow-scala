@@ -3,6 +3,8 @@ package com.dealermade.imageflow.libimageflow
 import com.dealermade.imageflow.native.ImageFlowNative
 import jnr.ffi.Pointer
 
+import java.nio.file.Path
+
 /**
  * An image flow builder which can build the image with a specific steps
  * Warning!! You should specify the steps in order, for example decode, constrain, rotate, encode
@@ -17,9 +19,9 @@ import jnr.ffi.Pointer
  * @param context the pointer to the created image flow context
  */
 protected[imageflow] case class ImageFlowProcessJobBuilder(
-  filePath: String,
-  ioMode: IoMode,
-  lifetime: ImageBufferLifetime,
+  outputFilePath: Path,
+  ioMode: IoMode = IoMode.ReadWriteSeekable,
+  lifetime: ImageBufferLifetime = ImageBufferLifetime.OutlivesContext,
   io: Set[IO] = Set.empty,
   steps: Vector[ImageFlowStep] = Vector.empty,
   security: Option[Security] = None
@@ -30,10 +32,10 @@ protected[imageflow] case class ImageFlowProcessJobBuilder(
 
   def build: ImageFlowProcessJob =
     ImageFlowProcessJob(
-      filePath,
+      outputFilePath,
       ioMode,
       lifetime,
-      io + IO(ioMode.value, Some(ImageFlowIn.value)),
+      io + IO(IoMode.None.value, Some(ImageFlowIn.value)),
       steps,
       security
     )

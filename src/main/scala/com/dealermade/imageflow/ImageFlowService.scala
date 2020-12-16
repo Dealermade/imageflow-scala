@@ -13,6 +13,8 @@ import com.dealermade.imageflow.native.ImageFlowNative
 import jnr.ffi.Pointer
 import zio.Task
 
+import java.nio.file.Paths
+
 object ImageFlowService {
   //private to this instance
   private implicit lazy val imageFlowNativeLibrary: ImageFlowNative = ImageFlowNative()
@@ -20,9 +22,7 @@ object ImageFlowService {
   def test(implicit imageFlowContext: Pointer) = {
     val imageJob: ImageFlowProcessJob =
       ImageFlowProcessJobBuilder(
-        getClass.getResource("/jpeg2000-home.jpg").getPath,
-        IoMode.None,
-        ImageBufferLifetime.OutlivesContext
+        Paths.get(getClass.getResource("/jpeg2000-home.jpg").getPath)
       ).decode(IoMode.None.value)
         // make mode as enum
         .constrain(
@@ -31,7 +31,7 @@ object ImageFlowService {
           height = Some(350)
         )
         .encode(
-          IoMode.ReadSequential.value,
+          IoMode.ReadWriteSeekable.value,
           EncodePreset.LossyPNG(EncodePreset.PNGQuant())
         )
         .build
@@ -49,17 +49,9 @@ object ImageFlowService {
     val imageInfo = imageJob.getImageInfo(IoMode.None.value)
     println(imageInfo)
 
-    val isDone: Boolean = imageJob.addOutputBuffer(IoMode.ReadSequential)
-    if (isDone) {
-      val imageProcessingResponse = imageJob.processImage()
-      println(imageProcessingResponse)
-      imageJob.writeOutputImageToFile(
-        IoMode.ReadSequential.value,
-        "src/test/resources/test.png"
-      )
-    } else
-      throw new RuntimeException(s"An error occurred while writing the image output")
-
+    imageJob.writeOutputImage(
+      Paths.get("/Users/jaredmdobson/Desktop/test.png")
+    )
   }
   /*
   def hasErrors: Boolean = imageFlowNativeLibrary.imageflow_context_has_error()

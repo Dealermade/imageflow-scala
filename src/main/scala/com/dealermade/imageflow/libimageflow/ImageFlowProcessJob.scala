@@ -9,8 +9,8 @@ import java.nio.file.{ Files, Path, Paths }
 import scala.reflect.io.File
 
 protected[imageflow] case class ImageFlowProcessJob(
-  filePath: String,
-  ioMode: IoMode,
+  outputFilePath: Path,
+  ioMode: IoMode = IoMode.ReadWriteSeekable,
   lifetime: ImageBufferLifetime,
   io: Set[IO],
   steps: Vector[ImageFlowStep],
@@ -19,9 +19,6 @@ protected[imageflow] case class ImageFlowProcessJob(
   implicit val imageFlowNativeLibrary: ImageFlowNative,
   implicit val context: Pointer
 ) {
-
-  def getFileStream(): Array[Byte] =
-    File(filePath).toByteArray()
 
   def getCommandJson(): String = {
     val framwise: Framwise = Framwise(steps)
@@ -33,14 +30,14 @@ protected[imageflow] case class ImageFlowProcessJob(
     getCommandJson().getBytes
 
   def addImageToContext(): Either[Boolean, String] = {
-    val buffer: Array[Byte] = getFileStream()
+    val buffer: Array[Byte] = Files.readAllBytes(outputFilePath)
     val offset: Int = buffer.length
     val pointer = Memory.allocateDirect(Runtime.getSystemRuntime, offset.toInt, true)
     pointer.put(0, buffer, 0, offset)
     val isSucceeded: Boolean =
       imageFlowNativeLibrary.imageflow_context_add_input_buffer(
         context,
-        ioMode.value,
+        IoMode.None.value,
         pointer,
         offset,
         lifetime.value
@@ -53,9 +50,6 @@ protected[imageflow] case class ImageFlowProcessJob(
       Right(error)
     }
   }
-
-  def addOutputBuffer(ioMode: IoMode): Boolean =
-    imageFlowNativeLibrary.imageflow_context_add_output_buffer(context, ioMode.value)
 
   def getImageInfo(ioID: Int): Either[String, ImageInfoResponse] = {
     import com.dealermade.imageflow.libimageflow.ImageFlow._
@@ -72,7 +66,7 @@ protected[imageflow] case class ImageFlowProcessJob(
     jsonResponse.data.get().fromJson[ImageInfoResponse]
   }
 
-  def processImage(): Either[String, JobResultResponse] = {
+  private def processImage(): Either[String, JobResultResponse] = {
     val commands: Array[Byte] = getCommandsAsBytes()
     println(commands.map(_.toChar).mkString)
     val jsonResponse: ImageFlowResponseStruct =
@@ -85,23 +79,21 @@ protected[imageflow] case class ImageFlowProcessJob(
     ImageFlowResponse.parse(jsonResponse.data.get())
   }
 
-  def writeOutputImage(ioID: Int): Array[Byte] = {
+  def writeOutputImage(filePath: Path) = {
+    imageFlowNativeLibrary.imageflow_context_add_output_buffer(context, ioMode.value)
+    val imageProcessingResponse = processImage()
+    println(imageProcessingResponse)
     val pointByRef = new PointerByReference
     val bytesWritten = new LongLongByReference(0)
     imageFlowNativeLibrary.imageflow_context_get_output_buffer_by_id(
       context,
-      ioID,
+      ioMode.value,
       pointByRef,
       bytesWritten
     )
     val pointer: Pointer = pointByRef.getValue
     val response: Array[Byte] = new Array[Byte](bytesWritten.intValue())
     pointer.get(0, response, 0, bytesWritten.intValue())
-    response
-  }
-
-  def writeOutputImageToFile(ioID: Int, filePath: String): Path = {
-    val imageBuffer: Array[Byte] = writeOutputImage(ioID)
-    Files.write(Paths.get(filePath), imageBuffer)
+    Files.write(filePath, response)
   }
 }
