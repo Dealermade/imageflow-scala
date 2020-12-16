@@ -2,6 +2,7 @@ package com.dealermade.imageflow.libimageflow
 
 import com.dealermade.imageflow.native.ImageFlowNative
 import jnr.ffi.Pointer
+import zio.Task
 
 import java.nio.file.Path
 
@@ -19,7 +20,8 @@ import java.nio.file.Path
  * @param context the pointer to the created image flow context
  */
 protected[imageflow] case class ImageFlowProcessJobBuilder(
-  outputFilePath: Path,
+  inputImagePath: Path,
+  outputImagePath: Path = Path.of("/"),
   ioMode: IoMode = IoMode.ReadWriteSeekable,
   lifetime: ImageBufferLifetime = ImageBufferLifetime.OutlivesContext,
   io: Set[IO] = Set.empty,
@@ -29,15 +31,35 @@ protected[imageflow] case class ImageFlowProcessJobBuilder(
   implicit imageFlowNative: ImageFlowNative,
   implicit val context: Pointer
 ) {
+  def buildLoadAndResize(): Task[Unit] = {
+    val imageFlowProcessJob: ImageFlowProcessJob = build()
+    val t0 = System.nanoTime()
+    for {
+      _ <- imageFlowProcessJob.loadInputImageIntoMemory()
+      _ <- Task.effect(
+        println(
+          s"Time after load input into memory: ${((System.nanoTime() - t0) / 1_000_000_000.0)} seconds"
+        )
+      )
+      _ <- imageFlowProcessJob.writeOutputImage()
+      _ <- Task.effect(
+        println(
+          s"Time after write output file: ${((System
+            .nanoTime() - t0) / 1_000_000_000.0)} seconds"
+        )
+      )
+    } yield ()
+  }
 
-  def build: ImageFlowProcessJob =
+  def build(): ImageFlowProcessJob =
     ImageFlowProcessJob(
-      outputFilePath,
-      ioMode,
-      lifetime,
-      io + IO(IoMode.None.value, Some(ImageFlowIn.value)),
-      steps,
-      security
+      inputImagePath = inputImagePath,
+      outputImagePath = outputImagePath,
+      ioMode = ioMode,
+      lifetime = lifetime,
+      io = io + IO(IoMode.None.value, Some(ImageFlowIn.value)),
+      steps = steps,
+      security = security
     )
 
   def flip(orientation: Orientation): ImageFlowProcessJobBuilder = {
@@ -84,20 +106,20 @@ protected[imageflow] case class ImageFlowProcessJobBuilder(
   }
 
   def decode(
-    ioID: Int,
     commands: Vector[ImageFlowDecodeStep] = Vector.empty
   ): ImageFlowProcessJobBuilder = {
     val maybeCommands: Option[Vector[ImageFlowDecodeStep]] =
       if (commands.isEmpty) None else Some(commands)
-    val decode: ImageFlowStep.Decode = ImageFlowStep.Decode(ioID, maybeCommands)
+    val decode: ImageFlowStep.Decode =
+      ImageFlowStep.Decode(IoMode.None.value, maybeCommands)
     val newSteps: Vector[ImageFlowStep] = addCommand(decode)
-    copy(steps = newSteps, io = io + IO(ioID, Some(ImageFlowIn.value)))
+    copy(steps = newSteps, io = io + IO(IoMode.None.value, Some(ImageFlowIn.value)))
   }
 
-  def encode(ioID: Int, presets: EncodePreset): ImageFlowProcessJobBuilder = {
-    val encode: ImageFlowStep.Encode = ImageFlowStep.Encode(ioID, presets)
+  def encode(presets: EncodePreset): ImageFlowProcessJobBuilder = {
+    val encode: ImageFlowStep.Encode = ImageFlowStep.Encode(ioMode.value, presets)
     val newSteps: Vector[ImageFlowStep] = addCommand(encode)
-    copy(steps = newSteps, io = io + IO(ioID, Some(ImageFlowOut.value)))
+    copy(steps = newSteps, io = io + IO(ioMode.value, Some(ImageFlowOut.value)))
   }
 
   private[this] def addCommand(step: ImageFlowStep): Vector[ImageFlowStep] =

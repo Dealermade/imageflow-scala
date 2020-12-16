@@ -1,5 +1,6 @@
 package com.dealermade.imageflow.libimageflow
 
+import zio.Task
 import zio.json.{ jsonField, DeriveJsonDecoder, JsonDecoder }
 
 sealed trait ImageFlowResponse {
@@ -132,13 +133,18 @@ object ImageFlowResponse {
   implicit val decoder: JsonDecoder[ImageFlowResponse] =
     DeriveJsonDecoder.gen[ImageFlowResponse]
 
-  def parse(jsonResponse: String): Either[String, JobResultResponse] = {
+  def parse(jsonResponse: String): Task[JobResultResponse] = {
     import zio.json._
     import com.dealermade.imageflow.libimageflow.ImageFlowResponse._
 
     val last = jsonResponse.toCharArray.lastIndexOf('}')
     val before = jsonResponse.slice(0, last + 1)
-    before.fromJson[JobResultResponse]
+    Task.fromEither(
+      before
+        .fromJson[JobResultResponse]
+        .left
+        .map(errorString => new Throwable(errorString))
+    )
   }
 
 }

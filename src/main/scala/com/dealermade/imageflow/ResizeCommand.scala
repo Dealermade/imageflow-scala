@@ -5,7 +5,9 @@ import com.dealermade.imageflow.libimageflow.ConstrainMode
 import java.nio.file.Path
 
 final case class ResizeCommand(
-  inputFile: Path,
+  inputImagePath: Path,
   constrainMode: ConstrainMode,
-  outputFile: Path
+  outputWidth: Int,
+  outputHeight: Int,
+  outputImagePath: Path
 )

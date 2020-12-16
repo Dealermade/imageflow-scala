@@ -11,48 +11,29 @@ import com.dealermade.imageflow.libimageflow.{
 }
 import com.dealermade.imageflow.native.ImageFlowNative
 import jnr.ffi.Pointer
+import scalaz.Scalaz.ToOptionIdOps
 import zio.Task
 
 import java.nio.file.Paths
 
 object ImageFlowService {
+
+  def actualBulkResizeImage(
+    bulkResizeCommand: BulkResizeCommand
+  )(implicit imageFlowContext: Pointer): Task[Unit] = ???
+
+  def bulkResizeImages(bulkResizeCommand: BulkResizeCommand) =
+    for {
+      imageFlowContext: Pointer <- ImageFlowNative.createContext()
+      _ <- actualBulkResizeImage(bulkResizeCommand)(imageFlowContext)
+        .ensuring(
+          ImageFlowNative.destroyContext(imageFlowContext)
+        )
+    } yield ()
+
   //private to this instance
   private implicit lazy val imageFlowNativeLibrary: ImageFlowNative = ImageFlowNative()
 
-  def test(implicit imageFlowContext: Pointer) = {
-    val imageJob: ImageFlowProcessJob =
-      ImageFlowProcessJobBuilder(
-        Paths.get(getClass.getResource("/jpeg2000-home.jpg").getPath)
-      ).decode(IoMode.None.value)
-        // make mode as enum
-        .constrain(
-          mode = Some(ConstrainMode.AspectCrop),
-          width = Some(500),
-          height = Some(350)
-        )
-        .encode(
-          IoMode.ReadWriteSeekable.value,
-          EncodePreset.LossyPNG(EncodePreset.PNGQuant())
-        )
-        .build
-
-    val result: Either[Boolean, String] = imageJob.addImageToContext()
-
-    result match {
-      case Left(_) => println("Image buffer added to the context with success :D")
-      case Right(error) =>
-        throw new RuntimeException(
-          s"An error occurred while adding image buffer to the context $error"
-        )
-    }
-
-    val imageInfo = imageJob.getImageInfo(IoMode.None.value)
-    println(imageInfo)
-
-    imageJob.writeOutputImage(
-      Paths.get("/Users/jaredmdobson/Desktop/test.png")
-    )
-  }
   /*
   def hasErrors: Boolean = imageFlowNativeLibrary.imageflow_context_has_error()
 
@@ -65,13 +46,26 @@ object ImageFlowService {
   def resizeImage(resizeCommand: ResizeCommand): Task[Unit] =
     for {
       imageFlowContext: Pointer <- ImageFlowNative.createContext()
-      _ <- actualResizeImage(imageFlowContext).ensuring(
-        ImageFlowNative.destroyContext(imageFlowContext)
-      )
+      _ <- actualResizeImage(resizeCommand)(imageFlowContext)
+        .ensuring(
+          ImageFlowNative.destroyContext(imageFlowContext)
+        )
     } yield ()
 
-  private def actualResizeImage(imageFlowContext: Pointer): Task[Unit] =
-    for {
-      _ <- Task.effect(test(imageFlowContext))
-    } yield ()
+  private def actualResizeImage(
+    resizeCommand: ResizeCommand
+  )(implicit imageFlowContext: Pointer): Task[Unit] =
+    ImageFlowProcessJobBuilder(
+      outputImagePath = resizeCommand.outputImagePath,
+      inputImagePath = resizeCommand.inputImagePath
+    ).decode()
+      .constrain(
+        mode = ConstrainMode.AspectCrop.some,
+        width = resizeCommand.outputWidth.some,
+        height = resizeCommand.outputHeight.some
+      )
+      .encode(
+        EncodePreset.JPEG(EncodePreset.MozJPEG(quality = 90, progressive = true))
+      )
+      .buildLoadAndResize()
 }
