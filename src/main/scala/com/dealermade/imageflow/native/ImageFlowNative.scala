@@ -120,7 +120,7 @@ trait ImageFlowNative {
 	 *
 	 * C/C++ signature: bool imageflow_context_has_error(struct imageflow_context *context);
 	 */
-  def imageflow_context_has_error(context: Pointer): Boolean
+  def imageflow_context_has_error(implicit context: Pointer): Boolean
 
   /**
 	 * Adds an input buffer to the job context.

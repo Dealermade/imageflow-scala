@@ -9,7 +9,7 @@ class ImageFlow {
   private[this] implicit lazy val imageFlowNativeLibrary: ImageFlowNative = ImageFlowNative()
   private[this] implicit lazy val context: Pointer                        = ImageFlowNative.createContext()
 
-  def hasErrors: Boolean = imageFlowNativeLibrary.imageflow_context_has_error(context)
+  def hasErrors: Boolean = imageFlowNativeLibrary.imageflow_context_has_error
 
   def getError(offset: Int = 1024): String = ImageFlowNative.getError(offset)
 
